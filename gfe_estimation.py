@@ -40,13 +40,18 @@ def _grouping(outcome, ngroups, nperiods, nindividuals, alpha_0, theta_0, X):
     """
     
     # i. Calculate the square error as if all individuals belong to one group for all groups.
-    group_error = np.empty((outcome.size,ngroups))
+    group_error_observation = np.empty((outcome.size,ngroups))
     for g in range(ngroups):
-            group_error[:,g] = np.square(outcome - X@theta_0 - 
+            group_error_observation[:,g] = np.square(outcome - X@theta_0 - 
             np.tile(alpha_0[g*nperiods:(g+1)*nperiods],nindividuals))
-   
+    
+    group_error_individual = np.empty((nindividuals,ngroups))
+    for n in range(nindividuals):
+        group_error_individual[n,:] = np.sum(group_error_observation[(n*nperiods):((n+1)*nperiods)], 
+        axis=0)
+
     # ii. Assign individuals to the group that gave the smallest square error. 
-    group_assignment = np.argmin(group_error, axis =1)
+    group_assignment = np.argmin(group_error_individual, axis =1)
     
     # iii. Create the dummy matrix
     dummy = np.zeros(((nindividuals*nperiods),(ngroups*nperiods)))
@@ -56,8 +61,7 @@ def _grouping(outcome, ngroups, nperiods, nindividuals, alpha_0, theta_0, X):
         for t in range(nperiods):
             time_dummy = np.zeros(nperiods)
             time_dummy[t] = 1
-            time_dummy = np.tile(time_dummy, nindividuals).astype(int)
-            dummy[:,(column)] = group * time_dummy
+            dummy[:,(column)] = np.kron(group,time_dummy)
             column += 1 
             if column == ngroups * nperiods:
                 break
@@ -160,7 +164,7 @@ if __name__ == "__main__":
     nfeatures=2, ngroups=2, nperiods=10, alpha_0=np.array(alpha_1t[:10] + alpha_2t[:10]), 
     theta_0=np.array([0.1,0.5]))
     
-    params = {"nindividuals" : 100,
+    params = {"nindividuals" : 1000,
                 "nfeatures" : 2,
                 "ngroups" : 3,
                 "nperiods" : 2,
