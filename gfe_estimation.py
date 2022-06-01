@@ -1,4 +1,6 @@
+from multiprocessing import dummy
 import numpy as np
+#from numba import jit
 
 """Implementing Algorithm 1 of Grouped Fixed Effect Estimator
 in Bonhomme and Manresa(2015):
@@ -10,10 +12,10 @@ in Bonhomme and Manresa(2015):
 
  3. Estimate the (theta, alpha) by OLS.
  
- 4. Iterate until (theta, alpha) converges to a value (hopefully to their true value.)
+ 4. Iterate until a numerical convergence of (theta, alpha).
  
 """
-
+#@jit(nopython=True)
 def _grouping(outcome, ngroups, nperiods, nindividuals, alpha_0, theta_0, X):
     
 
@@ -68,7 +70,7 @@ def _grouping(outcome, ngroups, nperiods, nindividuals, alpha_0, theta_0, X):
                 
     return dummy
 
-
+#@jit(nopython=True)
 def _get_estimates(regression_data):
     """Estimation by OLS.
     Args:
@@ -87,6 +89,7 @@ def _get_estimates(regression_data):
             ),regression_data[:,1:].T),regression_data[:,0])
     return estimates
 
+#@jit(nopython=True)
 def estimate_grouped_fixed_effect_model_parameters(outcome, ngroups, nperiods, nindividuals, 
 alpha_0, theta_0, X,nfeatures):
     """Iterates 
@@ -108,6 +111,7 @@ alpha_0, theta_0, X,nfeatures):
         np.ndarray: 1-d array that contains gfe model estimates. 
                     0:nfeatures time invariant coeefficients and nfeatures: grouped fixed effects' estimates.
     """
+    nobs = nindividuals*nperiods
 
 # time and group dummy that is 1 if the the outcome is in the particular time and the 
 # individual belongs to the particular group.
@@ -136,8 +140,47 @@ alpha_0, theta_0, X,nfeatures):
         regression_data[:,(nfeatures+1):] =  _grouping(outcome, ngroups, nperiods, nindividuals, 
         update_estimates[nfeatures:], update_estimates[0:nfeatures], X)
         estimates = _get_estimates(regression_data)
+    
+    # Standard deviation estimator of the estimates
+    Xdemeaned = np.zeros((nobs,nfeatures))
+    residuals = outcome - regression_data[:,1:]@estimates
+    var_alpha = np.empty(ngroups*nperiods)
+    for i in range(ngroups*nperiods):
+        var_alpha[i] = sum(np.square(residuals*dummy[:,i]))/sum(dummy[:,i])**2
+        xbar =  sum((X.T * dummy[:,i]).T)/sum(dummy[:,i])
+        Xdemeaned = Xdemeaned + (X.T * dummy[:,i]).T - (np.tile(xbar,
+         ((nindividuals*nperiods),1)).T * dummy[:,i]).T
+    
+    Sigma_theta = Xdemeaned.T @ Xdemeaned / nobs
+    Omega_theta =  ((Xdemeaned.T * residuals) @ (Xdemeaned.T * residuals).T)/nobs
+    var_theta = np.diag(np.linalg.inv(Sigma_theta) @ Omega_theta @ np.linalg.inv(Sigma_theta))/nobs
+    
+    return estimates, np.concatenate((np.sqrt(var_theta), np.sqrt(var_alpha)))
 
-    return estimates
+
+# def gfe_variance(outcome, ngroups, nperiods, nindividuals, nfeatures, alpha_0, theta_0, X):
+#     nobs = nindividuals*nperiods
+#     dummy = _grouping(outcome, ngroups, nperiods, nindividuals, alpha_0, theta_0, X)
+#     estimates = estimate_grouped_fixed_effect_model_parameters(outcome, ngroups, nperiods, nindividuals,
+#     alpha_0, theta_0, X, nfeatures)
+#     Xtot = np.empty((outcome.size, (ngroups*nperiods + nfeatures)))
+#     Xtot[:,:(nfeatures)] = X
+#     Xtot[:,nfeatures:] = dummy
+#     Xdemeaned = np.zeros((nobs,nfeatures))
+#     residuals = outcome - Xtot@estimates
+#     var_alpha = np.empty(ngroups*nperiods)
+#     for i in range(ngroups*nperiods):
+#         var_alpha[i] = sum(np.square(residuals*dummy[:,i]))/sum(dummy[:,i])**2
+#         xbar =  sum((X.T * dummy[:,i]).T)/sum(dummy[:,i])
+#         Xdemeaned = Xdemeaned + (X.T * dummy[:,i]).T - (np.tile(xbar,
+#          ((nindividuals*nperiods),1)).T * dummy[:,i]).T
+    
+#     Sigma_theta = Xdemeaned.T @ Xdemeaned / nobs
+#     Omega_theta =  (Xdemeaned.T * residuals) @ (Xdemeaned.T * residuals).T
+#     var_theta = np.diag(np.linalg.inv(Sigma_theta) @ Omega_theta @ np.linalg.inv(Sigma_theta))/nobs
+
+#     return np.sqrt(var_theta), np.sqrt(var_alpha)
+
 
 if __name__ == "__main__":
     from simulate import simulate
@@ -156,17 +199,17 @@ if __name__ == "__main__":
     for t in range(900):
         alpha_2t.append(alpha_2(t+1))
 
-    y, X = simulate(nindividuals=1000, nfeatures=2, ngroups=2, nperiods=10, 
-    alpha=np.array(alpha_1t[:10] + alpha_2t[:10]), theta=np.array([0.1,0.5]),
+    y, X = simulate(nindividuals=100, nfeatures=2, ngroups=2, nperiods=5, 
+    alpha=np.array(alpha_1t[:5] + alpha_2t[:5]), theta=np.array([0.1,0.5]),
     low = 0, up = 15)
 
-    estimate_grouped_fixed_effect_model_parameters(outcome=y, X=X, nindividuals=1000, 
-    nfeatures=2, ngroups=2, nperiods=10, alpha_0=np.array(alpha_1t[:10] + alpha_2t[:10]), 
+    estimate_grouped_fixed_effect_model_parameters(outcome=y, X=X, nindividuals=100, 
+    nfeatures=2, ngroups=2, nperiods=5, alpha_0=np.array(alpha_1t[:5] + alpha_2t[:5]), 
     theta_0=np.array([0.1,0.5]))
     
-    params = {"nindividuals" : 1000,
+    params = {"nindividuals" : 100,
                 "nfeatures" : 2,
-                "ngroups" : 3,
+                "ngroups" : 2,
                 "nperiods" : 2,
                 "theta" : np.array([0.1,0.5]),
                 "alpha" : np.array([5, 20, 15, 50, 30, 80]),
