@@ -8,35 +8,46 @@ from simulate_bias import *
 "nperiods" = 20, 10, 5
 "ngroups" = 4, 3, 2, 1 """
 
-
-def bias(realizations, std, true_value, G, N, T, critical_value=1.96):
+def table(realizations, std, true_value, estimator, N, T, critical_value=1.96):
     ci_low = realizations - critical_value*std
     ci_up = realizations + critical_value*std
     return pd.DataFrame({ 
         'T' : T,
         'N' : N,
-        'G': G,
-        'bias' : realizations.mean() - true_value
-        })
-
-def rmse(realizations, std, true_value, G, N, T, critical_value=1.96):
-    ci_low = realizations - critical_value*std
-    ci_up = realizations + critical_value*std
-    return pd.DataFrame({ 
-        'T' : T,
-        'N' : N,
-        'G': G,
-        'rmse': np.sqrt(((realizations - true_value)**2).mean())
-        })
-def cp(realizations, std, true_value, G, N, T, critical_value=1.96):
-    ci_low = realizations - critical_value*std
-    ci_up = realizations + critical_value*std
-    return pd.DataFrame({ 
-        'T' : T,
-        'N' : N,
-        'G': G,
+        'estimator': estimator,
+        'bias' : realizations.mean() - true_value,
+        'rmse': np.sqrt(((realizations - true_value)**2).mean()),
         'coverage probability' : (((ci_low<=true_value)&(ci_up>=true_value))*1).mean()
         })
+
+# def bias(realizations, std, true_value, G, N, T, critical_value=1.96):
+#     ci_low = realizations - critical_value*std
+#     ci_up = realizations + critical_value*std
+#     return pd.DataFrame({ 
+#         'T' : T,
+#         'N' : N,
+#         'G': G,
+#         'bias' : realizations.mean() - true_value
+#         })
+
+# def rmse(realizations, std, true_value, G, N, T, critical_value=1.96):
+#     ci_low = realizations - critical_value*std
+#     ci_up = realizations + critical_value*std
+#     return pd.DataFrame({ 
+#         'T' : T,
+#         'N' : N,
+#         'G': G,
+#         'rmse': np.sqrt(((realizations - true_value)**2).mean())
+#         })
+# def cp(realizations, std, true_value, G, N, T, critical_value=1.96):
+#     ci_low = realizations - critical_value*std
+#     ci_up = realizations + critical_value*std
+#     return pd.DataFrame({ 
+#         'T' : T,
+#         'N' : N,
+#         'G': G,
+#         'coverage probability' : (((ci_low<=true_value)&(ci_up>=true_value))*1).mean()
+#         })
 
 
 def alpha_1(t):
@@ -168,101 +179,183 @@ sd11  = pd.DataFrame(sd11)#,  columns = columns2x5)
 
 
 estimates12, sd12 =  monte_carlo_simulation (**params, nindividuals=50, nperiods=10,
-alpha=alpha(10), alpha_0=np.append(alpha(10),((alpha(10)[:10] + alpha(10)[10:20])/2)), specified_ngroups=3)
+alpha=alpha(10), alpha_0=np.append(alpha(10),(alpha(10)[:10]+alpha(10)[10:])-1), specified_ngroups=3)
 
 realizations12 = pd.DataFrame(estimates12)#,  columns = columns2x10)
 sd12  = pd.DataFrame(sd12)#,  columns = columns2x10)
 
 
 estimates13, std13 =  monte_carlo_simulation(**params, nindividuals=100, nperiods=10,
-alpha=alpha(10), alpha_0=np.append(alpha(10),((alpha(10)[:10] + alpha(10)[10:20])/2)), specified_ngroups=3)
+alpha=alpha(10), alpha_0=np.append(alpha(10),(alpha(10)[:10]+alpha(10)[10:])-1), specified_ngroups=3)
 
 realizations13 = pd.DataFrame(estimates13)#,  columns = columns2x10)
 sd13  = pd.DataFrame(std13)#,  columns = columns2x10)
 
 
 estimates14, std14 =  monte_carlo_simulation(**params, nindividuals=1000, nperiods=10,
-alpha=alpha(10), alpha_0=np.append(alpha(10),((alpha(10)[:10] + alpha(10)[10:20])/2)), specified_ngroups=3)
+alpha=alpha(10), alpha_0=np.append(alpha(10),(alpha(10)[:10]+alpha(10)[10:])-1), specified_ngroups=3)
 
 realizations14 = pd.DataFrame(estimates14)#,  columns = columns2x10)
 sd14  = pd.DataFrame(std14)#,  columns = columns2x10)
 
 
 estimates15, std15 =  monte_carlo_simulation(**params, nindividuals=50, nperiods=20,
-alpha=alpha(20), alpha_0=np.append(alpha(20),((alpha(20)[:20] + alpha(20)[20:40])/2)), specified_ngroups=3)
+alpha=alpha(20), alpha_0=np.append(np.append(((alpha(20)[:20]+alpha(20)[20:])-2), (alpha(20)[:20]-0.5)), (alpha(20)[:20]+0.5)), specified_ngroups=3)
 
-realizations15 = pd.DataFrame(estimates6)#,  columns = columns2x20)
+realizations15 = pd.DataFrame(estimates15)#,  columns = columns2x20)
 sd15  = pd.DataFrame(std15)#,  columns = columns2x20)
 
 
 estimates16, std16 =  monte_carlo_simulation(**params, nindividuals=100, nperiods=20,
-alpha=alpha(20), alpha_0=np.append(alpha(20),((alpha(20)[:20] + alpha(20)[20:40])/2)), specified_ngroups=3)
+alpha=alpha(20), alpha_0=np.append(np.append(((alpha(20)[:20]+alpha(20)[20:])-2), (alpha(20)[:20]-0.5)), (alpha(20)[:20]+0.5)), specified_ngroups=3)
 
 realizations16 = pd.DataFrame(estimates16)#,  columns = columns2x20)
 sd16  = pd.DataFrame(std16)#,  columns = columns2x20)
 
 estimates17, std17 =  monte_carlo_simulation(**params, nindividuals=1000, nperiods=20,
-alpha=alpha(20), alpha_0=np.append(alpha(20),((alpha(20)[:20] + alpha(20)[20:40])/2)), specified_ngroups=3)
+alpha=alpha(20), alpha_0=np.append(np.append(((alpha(20)[:20]+alpha(20)[20:])-2), (alpha(20)[:20]-0.5)), (alpha(20)[:20]+0.5)), specified_ngroups=3)
 
 realizations17 = pd.DataFrame(estimates17)#,  columns = columns2x20)
 sd17  = pd.DataFrame(std17)#,  columns = columns2x20)
 
-pd.concat([bias(realizations.iloc[:,:2],sd.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=1),
-bias(realizations1.iloc[:,:2],std1.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=1),
-bias(realizations2.iloc[:,:2],std2.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=1),
-bias(realizations3.iloc[:,:2],std3.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=1),
-bias(realizations4.iloc[:,:2],std4.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=1),
-bias(realizations5.iloc[:,:2],std5.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=1),
-bias(realizations6.iloc[:,:2],std6.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=1),
-bias(realizations7.iloc[:,:2],std7.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=1),
-bias(realizations8.iloc[:,:2],std8.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=1),
-bias(realizations9.iloc[:,:2],sd9.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=3),
-bias(realizations10.iloc[:,:2],sd10.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=3),
-bias(realizations11.iloc[:,:2],sd11.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=3),
-bias(realizations12.iloc[:,:2],sd12.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=3),
-bias(realizations13.iloc[:,:2],sd13.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=3),
-bias(realizations14.iloc[:,:2],sd14.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=3),
-bias(realizations15.iloc[:,:2],sd15.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=3),
-bias(realizations16.iloc[:,:2],sd16.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=3),
-bias(realizations17.iloc[:,:2],sd17.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=3)
-]).reset_index().set_index(['T', 'N', 'G','index']).sort_index().to_latex('bias_groups.tex')
+""""
+G = 4 """
 
-pd.concat([rmse(realizations.iloc[:,:2],sd.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=1),
-rmse(realizations1.iloc[:,:2],std1.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=1),
-rmse(realizations2.iloc[:,:2],std2.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=1),
-rmse(realizations3.iloc[:,:2],std3.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=1),
-rmse(realizations4.iloc[:,:2],std4.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=1),
-rmse(realizations5.iloc[:,:2],std5.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=1),
-rmse(realizations6.iloc[:,:2],std6.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=1),
-rmse(realizations7.iloc[:,:2],std7.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=1),
-rmse(realizations8.iloc[:,:2],std8.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=1),
-rmse(realizations9.iloc[:,:2],sd9.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=3),
-rmse(realizations10.iloc[:,:2],sd10.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=3),
-rmse(realizations11.iloc[:,:2],sd11.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=3),
-rmse(realizations12.iloc[:,:2],sd12.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=3),
-rmse(realizations13.iloc[:,:2],sd13.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=3),
-rmse(realizations14.iloc[:,:2],sd14.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=3),
-rmse(realizations15.iloc[:,:2],sd15.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=3),
-rmse(realizations16.iloc[:,:2],sd16.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=3),
-rmse(realizations17.iloc[:,:2],sd17.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=3)
-]).reset_index().set_index(['T', 'N', 'G','index']).sort_index().to_latex('rmse_groups.tex')
+estimates18, std18 =  monte_carlo_simulation(**params, nindividuals=50, nperiods=5,alpha=alpha(5), 
+alpha_0=np.append(np.append((alpha(5)[:5]+0.5),(alpha(5)[:5]-0.5)), np.append((alpha(5)[5:]+0.5),(alpha(5)[5:]-0.5))),
+specified_ngroups=4)
 
-pd.concat([cp(realizations.iloc[:,:2],sd.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=1),
-cp(realizations1.iloc[:,:2],std1.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=1),
-cp(realizations2.iloc[:,:2],std2.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=1),
-cp(realizations3.iloc[:,:2],std3.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=1),
-cp(realizations4.iloc[:,:2],std4.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=1),
-cp(realizations5.iloc[:,:2],std5.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=1),
-cp(realizations6.iloc[:,:2],std6.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=1),
-cp(realizations7.iloc[:,:2],std7.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=1),
-cp(realizations8.iloc[:,:2],std8.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=1),
-cp(realizations9.iloc[:,:2],sd9.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=3),
-cp(realizations10.iloc[:,:2],sd10.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=3),
-cp(realizations11.iloc[:,:2],sd11.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=3),
-cp(realizations12.iloc[:,:2],sd12.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=3),
-cp(realizations13.iloc[:,:2],sd13.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=3),
-cp(realizations14.iloc[:,:2],sd14.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=3),
-cp(realizations15.iloc[:,:2],sd15.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=3),
-cp(realizations16.iloc[:,:2],sd16.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=3),
-cp(realizations17.iloc[:,:2],sd17.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=3)
-]).reset_index().set_index(['T', 'N', 'G','index']).sort_index().to_latex('cp_groups.tex')
+realizations18 = pd.DataFrame(estimates18)#,  columns = columns2x20)
+sd18  = pd.DataFrame(std18)#,  columns = columns2x20)
+
+
+
+estimates19, std19 =  monte_carlo_simulation(**params, nindividuals=100, nperiods=5, 
+alpha=alpha(5), 
+alpha_0= np.append(np.append((alpha(5)[:5]+0.5),(alpha(5)[:5]-0.5)), np.append((alpha(5)[5:]+0.5),(alpha(5)[5:]-0.5))), specified_ngroups=4)
+
+realizations19 = pd.DataFrame(estimates19)#,  columns = columns2x5)
+sd19  = pd.DataFrame(std19)#,  columns = columns2x5)
+
+
+estimates20, std20 =  monte_carlo_simulation(**params, nindividuals=1000, nperiods=5,
+alpha=alpha(5), 
+alpha_0=np.append(np.append((alpha(5)[:5]+0.5),(alpha(5)[:5]-0.5)), np.append((alpha(5)[5:]+0.5),(alpha(5)[5:]-0.5))),specified_ngroups=4)
+
+realizations20 = pd.DataFrame(estimates20)#,  columns = columns2x5)
+sd20  = pd.DataFrame(std20)#,  columns = columns2x5)
+
+estimates21, sd21 =  monte_carlo_simulation(**params, nindividuals=50, nperiods=10,
+alpha=alpha(10), alpha_0=np.append(np.append((alpha(10)[:10]+0.5),(alpha(10)[:10]-0.5)), np.append((alpha(10)[10:]+0.5),(alpha(10)[10:]-0.5))), 
+specified_ngroups=4)
+
+realizations21 = pd.DataFrame(estimates21)#,  columns = columns2x5)
+sd21  = pd.DataFrame(sd21)#,  columns = columns2x5)
+
+
+estimates22, sd22 =  monte_carlo_simulation (**params, nindividuals=100, nperiods=10,
+alpha=alpha(10), alpha_0=np.append(np.append((alpha(10)[:10]+0.5),(alpha(10)[:10]-0.5)), np.append((alpha(10)[10:]+0.5),(alpha(10)[10:]-0.5))),
+ specified_ngroups=4)
+
+realizations22 = pd.DataFrame(estimates22)#,  columns = columns2x10)
+sd22  = pd.DataFrame(sd22)#,  columns = columns2x10)
+
+
+estimates23, std23 =  monte_carlo_simulation(**params, nindividuals=1000, nperiods=10,
+alpha=alpha(10), alpha_0=np.append(np.append((alpha(10)[:10]+0.5),(alpha(10)[:10]-0.5)), np.append((alpha(10)[10:]+0.5),(alpha(10)[10:]-0.5))), specified_ngroups=4)
+
+realizations23 = pd.DataFrame(estimates23)#,  columns = columns2x10)
+sd23  = pd.DataFrame(std23)#,  columns = columns2x10)
+
+
+estimates24, std24 =  monte_carlo_simulation(**params, nindividuals=50, nperiods=20,
+alpha=alpha(20), alpha_0=np.append(np.append((alpha(20)[:20]+0.5),(alpha(20)[:20]-0.5)), np.append((alpha(20)[20:]+0.5),(alpha(20)[20:]-0.5))),
+ specified_ngroups=4)
+
+realizations24 = pd.DataFrame(estimates24)#,  columns = columns2x10)
+sd24  = pd.DataFrame(std24)#,  columns = columns2x10)
+
+
+estimates25, std25 =  monte_carlo_simulation(**params, nindividuals=100, nperiods=20,
+alpha=alpha(20), alpha_0=np.append(np.append((alpha(20)[:20]+0.5),(alpha(20)[:20]-0.5)), np.append((alpha(20)[20:]+0.5),(alpha(20)[20:]-0.5))), 
+specified_ngroups=4)
+
+realizations25 = pd.DataFrame(estimates25)#,  columns = columns2x20)
+sd25  = pd.DataFrame(std25)#,  columns = columns2x20)
+
+
+estimates26, std26 =  monte_carlo_simulation(**params, nindividuals=1000, nperiods=20,
+alpha=alpha(20), alpha_0= np.append(np.append((alpha(20)[:20]+0.5),(alpha(20)[:20]-0.5)), np.append((alpha(20)[20:]+0.5),(alpha(20)[20:]-0.5)))
+, specified_ngroups=4)
+
+realizations26 = pd.DataFrame(estimates26)#,  columns = columns2x20)
+sd26  = pd.DataFrame(std26)#,  columns = columns2x20)
+
+pd.concat([table(realizations.iloc[:,:2],sd.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=1),
+table(realizations1.iloc[:,:2],std1.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=1),
+table(realizations2.iloc[:,:2],std2.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=1),
+table(realizations3.iloc[:,:2],std3.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=1),
+table(realizations4.iloc[:,:2],std4.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=1),
+table(realizations5.iloc[:,:2],std5.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=1),
+table(realizations6.iloc[:,:2],std6.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=1),
+table(realizations7.iloc[:,:2],std7.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=1),
+table(realizations8.iloc[:,:2],std8.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=1),
+table(realizations9.iloc[:,:2],sd9.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=3),
+table(realizations10.iloc[:,:2],sd10.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=3),
+table(realizations11.iloc[:,:2],sd11.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=3),
+table(realizations12.iloc[:,:2],sd12.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=3),
+table(realizations13.iloc[:,:2],sd13.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=3),
+table(realizations14.iloc[:,:2],sd14.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=3),
+table(realizations15.iloc[:,:2],sd15.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=3),
+table(realizations16.iloc[:,:2],sd16.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=3),
+table(realizations17.iloc[:,:2],sd17.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=3),
+table(realizations18.iloc[:,:2],sd18.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=4),
+table(realizations19.iloc[:,:2],sd19.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=4),
+table(realizations20.iloc[:,:2],sd20.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=4),
+table(realizations21.iloc[:,:2],sd21.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=4),
+table(realizations22.iloc[:,:2],sd22.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=4),
+table(realizations23.iloc[:,:2],sd23.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=4),
+table(realizations24.iloc[:,:2],sd24.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=4),
+table(realizations25.iloc[:,:2],sd25.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=4),
+table(realizations26.iloc[:,:2],sd26.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=4)
+]).reset_index().set_index(['T', 'N', 'G','index']).sort_index().to_latex('table_groups.tex')
+
+# pd.concat([rmse(realizations.iloc[:,:2],sd.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=1),
+# rmse(realizations1.iloc[:,:2],std1.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=1),
+# rmse(realizations2.iloc[:,:2],std2.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=1),
+# rmse(realizations3.iloc[:,:2],std3.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=1),
+# rmse(realizations4.iloc[:,:2],std4.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=1),
+# rmse(realizations5.iloc[:,:2],std5.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=1),
+# rmse(realizations6.iloc[:,:2],std6.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=1),
+# rmse(realizations7.iloc[:,:2],std7.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=1),
+# rmse(realizations8.iloc[:,:2],std8.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=1),
+# rmse(realizations9.iloc[:,:2],sd9.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=3),
+# rmse(realizations10.iloc[:,:2],sd10.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=3),
+# rmse(realizations11.iloc[:,:2],sd11.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=3),
+# rmse(realizations12.iloc[:,:2],sd12.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=3),
+# rmse(realizations13.iloc[:,:2],sd13.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=3),
+# rmse(realizations14.iloc[:,:2],sd14.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=3),
+# rmse(realizations15.iloc[:,:2],sd15.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=3),
+# rmse(realizations16.iloc[:,:2],sd16.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=3),
+# rmse(realizations17.iloc[:,:2],sd17.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=3)
+# ]).reset_index().set_index(['T', 'N', 'G','index']).sort_index().to_latex('rmse_groups.tex')
+
+# pd.concat([cp(realizations.iloc[:,:2],sd.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=1),
+# cp(realizations1.iloc[:,:2],std1.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=1),
+# cp(realizations2.iloc[:,:2],std2.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=1),
+# cp(realizations3.iloc[:,:2],std3.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=1),
+# cp(realizations4.iloc[:,:2],std4.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=1),
+# cp(realizations5.iloc[:,:2],std5.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=1),
+# cp(realizations6.iloc[:,:2],std6.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=1),
+# cp(realizations7.iloc[:,:2],std7.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=1),
+# cp(realizations8.iloc[:,:2],std8.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=1),
+# cp(realizations9.iloc[:,:2],sd9.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=5, G=3),
+# cp(realizations10.iloc[:,:2],sd10.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=5, G=3),
+# cp(realizations11.iloc[:,:2],sd11.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=5, G=3),
+# cp(realizations12.iloc[:,:2],sd12.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=10, G=3),
+# cp(realizations13.iloc[:,:2],sd13.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=10, G=3),
+# cp(realizations14.iloc[:,:2],sd14.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=10, G=3),
+# cp(realizations15.iloc[:,:2],sd15.iloc[:,:2], true_value= [0.1, 0.5], N=50, T=20, G=3),
+# cp(realizations16.iloc[:,:2],sd16.iloc[:,:2], true_value= [0.1, 0.5], N=100, T=20, G=3),
+# cp(realizations17.iloc[:,:2],sd17.iloc[:,:2], true_value= [0.1, 0.5], N=1000, T=20, G=3)
+# ]).reset_index().set_index(['T', 'N', 'G','index']).sort_index().to_latex('cp_groups.tex')
