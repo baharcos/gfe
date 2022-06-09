@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from gfe_estimation import estimate_grouped_fixed_effect_model_parameters
+from bic import gfe_bic
 import statsmodels.api as sm
 from linearmodels import PanelOLS
 
@@ -121,6 +122,62 @@ def monte_carlo_simulation(
         
     return(monte_carlo_coefficients, estimates_var)
 
+def monte_carlo_simulation_groups(
+    nindividuals,
+    nfeatures,
+    ngroups,
+    specified_ngroups,
+    nperiods,
+    theta,
+    alpha,
+    theta_0,
+    alpha_0,
+    low,
+    up,
+    nreps,
+    seed
+):
+    """[summary]
+
+    Args:
+        nindividuals ([type]): [description]
+        nfeatures ([type]): [description]
+        ngroups ([type]): [description]
+        specified_ngroups([type]): [description]
+        nperiods ([type]): [description]
+        theta ([type]): [description]
+        alpha ([type]): [description]
+        theta_0
+        alpha_0
+        low ([type]): [description]
+        up ([type]): [description]
+        nreps ([type]): [description]
+        seed ([type]): [description]
+    
+    Return:
+
+    """
+    np.random.seed(seed)
+    monte_carlo_coefficients = []
+    estimates_sd = []
+    ic =[]
+    #objective=[]
+    
+    for i in range(nreps):
+        y, X = simulate_ovb(nindividuals, nfeatures, ngroups, nperiods, theta, alpha, low, up) 
+        a = gfe_bic(outcome=y, ngroups=specified_ngroups, nperiods=nperiods, nindividuals=nindividuals, 
+                                                                   alpha_0=alpha_0, theta_0 = theta_0, X=X, nfeatures=nfeatures)
+        monte_carlo_coefficients.append(a['Estimates'])
+        
+        #variance = np.concatenate((gfe_variance(outcome=y, ngroups=specified_ngroups, nperiods=nperiods, 
+        #nindividuals=nindividuals, nfeatures=nfeatures, alpha_0=alpha_0, 
+        #theta_0=theta_0, X=X)))
+        estimates_sd.append(a['sd'])
+        ic.append(a['bic'])
+        #objective.append(a['objective'])
+        
+    return({'Estimates': monte_carlo_coefficients, 'sd': estimates_sd}, {'bic': ic})
+
 
 def monte_carlo_simulation_ols(
     nindividuals,
@@ -226,8 +283,42 @@ def monte_carlo_simulation_fe(
         #nindividuals=nindividuals, nfeatures=nfeatures, alpha_0=alpha_0, 
         #theta_0=theta_0, X=X)))
         estimates_var.append(FE.std_errors[1:])
+
+    
+    sd = pd.DataFrame(estimates_var).reset_index(drop=True)
+    realizations = pd.DataFrame(monte_carlo_coefficients).reset_index(drop=True)
         
-    return(monte_carlo_coefficients, estimates_var)
+    return(realizations, sd)
+
+def table(realizations, std, true_value, estimator, N, T, critical_value=1.96):
+    ci_low = realizations - critical_value*std
+    ci_up = realizations + critical_value*std
+    return pd.DataFrame({ 
+        'T' : T,
+        'N' : N,
+        'estimator': estimator,
+        'bias' : realizations.mean() - true_value,
+        'rmse': np.sqrt(((realizations - true_value)**2).mean()),
+        'coverage probability' : (((ci_low<=true_value)&(ci_up>=true_value))*1).mean()
+        })
+
+def _alpha_1(t):
+    return np.exp(t/20)
+
+def _alpha_2(t):
+    return -t/5
+
+def alpha(T):
+    alpha_1t = []
+    for t in range(T):
+        alpha_1t.append(_alpha_1(t+1))
+    
+    alpha_2t = []
+    for t in range(T):
+        alpha_2t.append(_alpha_2(t+1))
+    return np.array(alpha_1t + alpha_2t)
+
+
 
 
 if __name__ == "__main__":
