@@ -1,0 +1,60 @@
+The simple linear panel model, serving as the baseline model, can be written as:
+
+\begin{align}\label{{eqn:baseline}}
+    y_{it} = x_{it}'\theta + \mu + \upsilon_{it},  \hspace{0.7cm} i=1, \dots, N, \hspace{0.5cm} t = 1, \dots, T,
+\end{align}
+where $x_{it}$ is a $ k \times 1 $ vector.
+
+Equation \eqref{{eqn:baseline}} is the most restrictive case where no unobserved heterogeneity is allowed and all regressors need to be exogenous. It is nested within model \eqref{eqn:general} by setting $c_i, \zeta_t, \lambda_i' f_t, \alpha_{gt} = 0$.  As a matter of fact, this model is so restrictive that it is only adequate for a researcher to use when different samples are obtained for different periods as pooled cross-section rather than panel data. The most common use of this model in panel setting is to use the pooled OLS estimator as a baseline to compare more sophisticated models. Even though pooled OLS is a well-studied method, it is still worth-while to discuss its properties here since it is the foundation of the other models.
+
+The general modeling assumption of the panel data is that cross-section observations are i.i.d. while observations can be correlated over time within individual units and is formally stated below: 
+%allowing individual observations to be correlated over time and is stated formally below:
+\begin{assumption}
+P1:  $\{(\upsilon_i',x_{i1}',..., x_{iT}')\}_{i=1}^N$ is a sequence of i.i.d. random vectors.
+\end{assumption} 
+
+We now introduce some further notation for the upcoming assumptions: $X_i= \begin{pmatrix} x_{i1} & x_{i2} & \hdots & x_{iT} \end{pmatrix}'$ denotes a $ T \times k $ matrix, $Y_i$ denotes an $ T \times 1 $ vector, $\upsilon_i$ denotes a $ T \times 1 $ vector. $X$ is the $NT \times k$ dimensional stacked matrix of all $X_i$ and $Y$ is the a $NT \times 1 $ dimensional stacked vector of all $Y_i$, where individual observations are stacked together chronologically.
+
+We assume the covariates and error term to be contemporaneously uncorrelated:
+\begin{assumption}
+P2:  $\EX(\upsilon_i)=0$ and $\EX(X_i \upsilon_i ) = 0 $
+\end{assumption} 
+It is the weakest assumption we can make in order to interpret the slope coefficients $\theta$ in a causal form and to ensure the unbiasedness of the pooled OLS estimator. Note that $X_i \upsilon_i = \sumt x_{it}'\upsilon_{it}$ such that the assumption does not restrict the correlation between $x_{it}$ and $\upsilon_{is}$ if $ t \neq s $. $\EX(\upsilon_i)=0$ is not restrictive as any unobserved mean is captured by the intercept $\mu$.
+
+The following full-rank assumption ensures invertibility and assures the statistical identification of the OLS estimator. It holds when no explanatory variable can be written as a linear combination of the others, i.e. there is no multicollinearity. 
+\begin{assumption}
+P3:  $\EX(X_i'X_i)$ has full rank.
+\end{assumption} 
+
+It is important to notice here that assumption $\mathcal{P}-3$  allows for time invariant regressors, which will change in FE, TWFE and GFE estimators.
+
+%This estimator is called the pooled ordinary least squares (POLS) estimator because it corresponds to running OLS on the observations pooled across i and t. (from Wooldridge.)
+The pooled OLS estimator is defined by:
+\begin{align} \label{{eqn:pols}}
+    \hat\theta_{pool} = (\sumi\sumt x_{it}x_{it}')^{-1}\sumi\sumt x_{it}y_{it}
+\end{align}
+%Or in short matrix notation, $\hat\theta_{pool} = (X'X)^{-1}X'Y$. That is, as the name suggests, running OLS on the pooled observations.
+
+To examine large sample properties, we let $N \to \infty$ and keep T:
+\begin{theorem} 
+Consistency of Pooled OLS: Under assumption $\mathcal{P}$1-3, $\hat\theta_{pool}  \overset{p}{\to} \theta$. 
+\end{theorem}
+
+%We showed that we can estimate $\theta$ consistently using pooled OLS under the assumption  $\mathcal{P}$1-3. Armed with a consistent estimator, 
+We further need its asymptotic variance to exist to conduct inference. This is ensured by:
+
+\begin{assumption}
+P4:  $\EX((\lVert  x_{it} \rVert^4) + \upsilon_{it}^4)) < \infty $.
+\end{assumption} 
+
+The above assumption ensures $\EX(X_i'\upsilon_i\upsilon_i'X_i)$ exists and thus allows to show asymptotic normality of the pooled OLS estimates by CLT, we require the forth moment of the error term and the covariates to exist.
+% for which we need an additional assumption for technical reasons. We require forth moment of the error term and the covariates to exist in order to show asymptotic normality of the Pooled OLS estimates by CLT. The below assumption ensures $\EX(X_i'\upsilon_i\upsilon_i'X_i)$ exists. 
+
+\begin{theorem}
+Asymptotic Normality of Pooled OLS: Under assumption $\mathcal{P}$, \\ 
+$ \sqrt{N}(\hat\theta_{pool} - \theta) \overset{d}{\to} \mathcal{N}(0,\EX(X_i'X_i)^{-1}\EX(X_i'\upsilon_i \upsilon_i' X_i)\EX(X_i' X_i)^{-1})$ %E[X_i′Xi]−1E[X_i′\upsilon_i \upsilon_i′X_i]E[X_i′X_i]−1
+\end{theorem}
+%For the proofs and complete derivations see appendix. \\
+A robust variance estimator of $\hat\theta_{pool}$ without a degrees of freedom correction is given by 
+%$\hat{V} = 
+$(\dfrac{1}{N} X_i' X_i)^{-1}(\dfrac{1}{N}\sumi X_i'\hat \upsilon_i \hat \upsilon_i' X_i) (\dfrac{1}{N} X_i' X_i)^{-1})$ where $\hat{\upsilon}_i = Y_i - X_i\hat\theta_{pool}$ which allows for serial correlation between error terms and time-varying variance. 

@@ -1,0 +1,29 @@
+In economics, we often estimate models for a causal interpretation, given that the data at hand meets certain assumptions.
+A fundamental assumption for identifying the causal effect is the conditional independence assumption which requires the sample to be as good as random with respect to the unobservables(\cite{angrist2008mostly}.)
+
+More and more research concludes that the subjects of interest are heterogeneous in ways that are unobservable to the researcher: countries are history-dependent and differ in most aspects (\cite{acemoglu2005institutions}), firms differ in their productivity(\cite{card2018firms}), and individuals' decision making process differs from one and other(conclusion of virtually all behavioral econ papers, look for a lit review.)(\cite{von2011heterogeneity}.) If the unobserved heterogeneity is a confounder, then not accounting for it leads to an endogeneity problem and an omitted variable bias in the causal interpretation. 
+
+A popular approach to account for the unobserved heterogeneity in panel data containing multiple observations per unit is employing fixed effects, which refer to as FE. It is an attractive method, as it leaves the relation between unobserved confounders and covariates unrestricted. Nevertheless, the data at hand needs to meet FE assumptions, such as the time-invariance of the fixed effect for each individual. In some instances, this can prove to be too restrictive. Another caveat of FE is that its estimates suffer from an exacerbated measurement error and incidental parameter bias, especially in short panels.(\cite{heckman1987incidental})
+
+When the FE assumptions fail and when a large panel is available, interactive fixed effects, which refer to as IFE, enables a researcher to account for unobserved individual time-dynamic effects. However, suppose the data can be clustered into groups such that the unobserved heterogeneity is captured by the group where individual heterogeneity is small within. In that case, IFE without additional restriction can be too general, and the estimates suffer from overfitted identification. The clustering into groups often occurs in economic analysis as in high vs. low productivity firms, individuals from different income groups, developed and developing countries...For cases where the heterogeneity has a group structure, \textcite{bonhomme2015grouped} propose a grouped-fixed effects, GFE, framework to model the heterogeneity dynamically. The clustered time patterns of heterogeneity that is common among groups of individuals. They do not impose restrictions on the group membership and on the group-specific time patterns.
+
+Since the publication of \textcite{bonhomme2015grouped}, various applied papers have used GFE.  \textcite{janys2021mental} using GFE to evaluate the effects of abortion on individuals, \textcite{bonhomme2019distributional} uses GFE to account for firm classes and for dimension reduction to unit-specific fixed effects employen commonly in AKM models. \textcite{grunewald2017trade} employing GFE to study the link between income inequality and carbon-emissions categorizing countries into groups are just few examples.
+
+GFE model assumes that the number of groups are known by the researcher to derive the asymptotic results. In applications, even if the number of groups are suggested by economic theory, it is still unknown and subject to estimation that makes it prone to misspecify the number of groups. This paper examines the finite sample properties of group misspecification in a Monte Carlo simulation and provides heuristics.
+The upcoming sections are structured as follows: Section 2 lays out the theoretical background on linear panel models, section 3 describes the theoretical properties of GFE model and estimator, section 4 contains simulations and finally, section 5 concludes.
+
+
+
+% Important: Relies on the assumption that the distinct individual time patterns of unobserved heterogeneity(that is the error term) is relatively small
+
+% TWFE is a very common approach to account for unobserved heterogeneity and is widely studied method. 
+% that has been used in 19 percent of all empirical articles publication in American Economic Review policy analysis.
+
+% Why might paralel trends assumtion violated?: \cite{roth2022s}
+% - time variying confounding factor.
+% -transformation of the outcome like log
+% change of mean with average.
+
+%A popular approach to account for the unobserved heterogeneity in panel data containing multiple observations per unit is the fixed-effects. Fixed-effects leave the correlation between unobserved confounders and covariates unrestricted which makes it an attractive method. A time invariant fixed-effect is or each individual There assume to be an individual specific fixed-effect that is time invariant 
+%which could violate the the conditional independence assumption and lead to the endogeneity problem.In these settings, the regressors are endogenous and consequently, the OLS estimator is a biased estimator of the causal effect.
+%are just some exxamples.

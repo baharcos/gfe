@@ -1,0 +1,66 @@
+ Endogeneity problems caused by the unobservable variables correlated with the regressors are very common in applied research. One approach to resolve them would be instrumental variables, yet good instruments are hard to find and do not always exist. The benefit of having multiple observations per individual is that this allows the researcher to use variation within one individual to  account for the endogeneity problem caused by the unobservable variables correlated with the regressors. However, the pooled OLS estimator discussed in the previous subsection only takes observed variables into account. Therefore, it is not useful when there is an endogenous regressor and there is not an instrumental variable to account for the problem. Therefore, it has undesired properties in the presence of unobservable variables. Subsequently, this section shows how this problem can be addressed under certain conditions.
+% Since pooled OLS does not account for the unobserved effects we now move to a s linear panel data model setting with unobserved effects.
+%\subsubsection{One-Way Fixed Effects}
+For the first case, we include $c_i \neq 0 $ and implicitly assume
+$\xi_t, \lambda_i' f_t, \alpha_{gt} = 0 $. The model becomes:
+\begin{align}\label{eqn:fe}
+    y_{it} = x_{it}\theta + c_i + \upsilon_{it} \hspace{0.7cm} i=1,...,N, \hspace{0.3cm} t=1,...,T,
+\end{align}
+where $c_i$ is a time-invariant individual-specific variable, called the individual fixed effect. Fixed effects are unobserved and can be arbitrarily correlated with the regressors without affecting the unbiasedness and asymptotics of the estimator. In the presence of $c_i$, assumption $\mathcal{P}$-2 fails and \eqref{{eqn:pols}} is biased and inconsistent. Thus, for the fixed effects analysis, we need another estimator that accounts for $c_i$.
+%with a different set of assumptions on the error term. 
+
+We include $c_i$ to the common panel data assumption in random design which will be treated for the moment as a random variable rather than a parameter to be estimated.
+\begin{assumption}F1:  $\{c_i\}_{i=1}^N$ is a sequence of i.i.d. random variables. %,x_{i1}',..., x_{iT}', \upsilon_i')
+\end{assumption}
+As we leave the relation between $c_i$ and $x_{it}$ unrestricted, we need a stricter assumption on $\upsilon_{it}$ that is strict exogeneity: 
+ \begin{assumption}F2: 
+ $\EX(\upsilon_{it}|X_i) = 0$, $t=1, \dots, T$ 
+ \end{assumption}
+The above assumption requires $\upsilon_{it}$ to be mean independent of $x_{is}$ for all s. For asymptotic results, we could have instead assumed them to be uncorrelated:$\EX(\upsilon_{it}X_i) = 0$, $t=1, \dots, T$. Regardless, we need strict mean independence for finite sample analysis.
+
+For the statistical identification assumption, let $\Bar{y_i} = \dfrac{1}{T}\sumt y_{it}$, $\Bar{x_i} = \dfrac{1}{T}\sumt x_{it}$ and $\dot{y_{it}} = y_{it} -\Bar{y_i}$, $\dot{x_{it}} = x_{it} - \Bar{x_i}$. This facilitates notation for the within transformation. %and $\Bar{\upsilon} = \dfrac{1}{T}\sumt \upsilon_{it}$ 
+\begin{assumption}F3: $\EX(\dot{X_{i}}'\dot{X_{i}})$ has full rank.
+%$\sumt\EX(\dot{x_{it}}'\dot{x_{it}})$ has full rank.
+\end{assumption}
+The fixed effects estimator should be invariant to $c_i$  to estimate $\theta$ consistently while the relationship between $c_i$ and $x_{it}$ is unstructured. There are two equivalent ways to estimate the model (3) in such a manner.
+
+First, the within estimator is:
+\begin{align}
+\hat\theta_{fe} = \left(\sumi\sumt \dot{x_{it}}\dot{x_{it}}'\right)^{-1}\sumi\sumt \dot{x_{it}}\dot{y_{it}}
+\end{align}
+
+Second, we can include a dummy variable for each individual unit $Y = X\theta + Dc + \upsilon$ where D is an $NT \times N $ matrix whose column i has the entry 1 for the observations of the individual i and 0 for the rest. Dummy variable estimator disregards the assumption $\mathcal{F}$-1 and views $c_i$ as parameters to be estimated instead of random variables. Then we can use pooled OLS on this equation, which is called the dummy variable estimator. The dummy variables partial out the fixed effects from both the covariates and dependent variable. This enables both within estimator and dummy variable estimator to yield the same estimates with identical residuals. 
+
+Hence, dummy variable estimator could be advantageous if we are interested in the magnitude of the individual heterogeneity and do not see it as a nuisance parameter. 
+
+For the fixed T, N $\rightarrow \infty$ asymptotic analysis, we assume:
+
+\begin{assumption}F4: 
+$\EX(c_i^4 ) < \infty $,
+\end{assumption}
+which allows us to use CLT to derive the asymptotic distribution of $\hat\theta_{fe}$.
+
+\begin{theorem}
+Consistency of Fixed Effects Estimator: Under assumptions $\mathcal{P}$1 and $\mathcal{F}$1-3 \\ $\hat{\theta}_{fe} \overset{p}{\to} \theta$
+\end{theorem}
+
+\begin{theorem}
+Asymptotic Distribution of Fixed Effects Estimator: Under assumption $\mathcal{P}$-1,$\mathcal{P}$-4  and $\mathcal{F}$ $\sqrt{N}(\hat{\theta}_{fe} - \theta) \overset{d}{\to} \mathcal{N}(0,\EX(\dot{X}_i'\dot{X}_i)^{-1}\EX(\dot{X}_i'\upsilon_i \upsilon_i'\dot{X}_i)\EX(\dot{X}_i'\dot{X}_i)^{-1})$
+\end{theorem}
+%\paragraph{Inference:}
+A cluster robust variance estimator is given by:
+
+$(\dfrac{1}{N} \sumi \dot{X}_i'\dot{X}_i)^{-1} (\dfrac{1}{N} \sumi \dot{X}_i'\hat\upsilon_i \hat\upsilon_i'\dot{X}_i) (\dfrac{1}{N}\sumi \dot{X}_i'\dot{X}_i)^{-1}$.
+
+
+%For proofs and complete derivation see appendix.
+% Stricter assumptions are needed to estimate with OLS.
+% fixed effect is a constant and not a parameter to be estimated, it is an unobserved random variable.
+% Was to deal with unobservables: proxy variable, instrument for the elements of x that are correlated with unobservables, panel data sets if we have multiple observations.
+
+% Wooldridge:
+% Motivation: omitted variable bias.  the unobservable is a random variable, not a parameter to be estimated.
+% If $c_i$ is correlated with  $x_it$ then the pooled OLS is a biased and inconsistent estimator of the model.
+% We still focus on asymptotic properties of estimators, where the time dimension, T, is fixed and the cross section dimension, N, grows without bound. With large-N asymptotics it is convenient to view the cross section observations as independent, identically distributed draws from the population. For any cross section observation i—denoting a single individual, firm, city, and so on—we denote the observable variables for all T time periods by yit; xit Because of the fixed T assumption, the asymptotic analysis is valid for arbitrary time dependence and distributional heterogeneity across t.
+% When applying asymptotic analysis to panel data methods it is important to re- member that asymptotics are useful insofar as they provide a reasonable approximation to the finite sample properties of estimators and statistics.
+% Nevertheless, if N is sufficiently large relative to T, and we can assume rough independence in the cross section, then our asymptotic analysis should provide suitable approximations.

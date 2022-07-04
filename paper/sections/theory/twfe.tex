@@ -1,0 +1,32 @@
+%\subsection{Panel Models with Two-way Fixed Effects and Interactive Fixed Effects}
+%Before we move to a novel method it is worthwhile to touch upon some extensions of these class of models.
+%panel models with unobserved heterogeneity/of fixed effects models. 
+In most panel settings, it is too restrictive to assume there is no time trend in the data. Therefore, a natural extension to the previous model for estimating a linear panel model with unobserved effects is to include shared time effects. We allow for common trend $\xi_t$ to be different than 0 in addition to time-invariant unit fixed effects $c_i$. This is a very common approach in applied research, especially for policy analysis. It is the generalized version of the differences-in-differences method. To illustrate its popularity, \textcite{de2020two} found in a recent survey that 19 percent of all the empirical articles published in \textit{American Economic Review} between 2010-2012 used TWFE to estimate the causal effect of a treatment on the outcome.
+
+Consider the model:
+\begin{align}
+y_{it} = x_{it}'\theta + c_i + \xi_t + \upsilon_{it} \hspace{0.7cm} i=1,...,N, \hspace{0.3cm} t=1,...,T.
+\end{align}
+$\xi_t$ controls for the common time trend and affect-all period shocks. It is included when common time effects are impacting both $x_{it}$ and $y_{it}$. We implicitly assume $\lambda_i' f_t, \alpha_{gt} = 0$ that the cross-section unit and the period effects enter the model additive and there is no clustered time patterns of heterogeneity.
+
+The resulting estimator is called the “two-way fixed effects” (TWFE) estimator which is similar to FE estimator:
+We can either include dummy variables for each cross-section unit and time period or we can double-demean $x_{it}$ and $y_{it}$ and run a pooled OLS regression. As in FE both give equivalent estimates and result in same residuals. Adding dummy variables is straightforward, double demeaning is done by subtracting unit-specific averages over time:
+\begin{align*}
+      \bar{x}_{i.} = \dfrac{1}{T} \sumt x_{it},
+\end{align*}
+and time specific averages over cross-section:
+\begin{align*}
+      \bar{x}_{.t} = \dfrac{1}{N} \sumi x_{it},
+\end{align*}
+and adding the total average:
+\begin{align*}
+      \bar{x} = \dfrac{1}{NT} \sumi \sumt x_{it}.
+\end{align*}
+That is $\ddot x_{it} = x_{it} -  \bar{x}_{i.} - \bar{x}_{.t} + \bar{x} $ and same for  $\ddot y_{it} = y_{it} -  \bar{y}_{i.} - \bar{y}_{.t} + \bar{y}$ The regressors has to show some variation over time and across cross-sections.
+
+The estimator is given by:
+
+\begin{align}
+ \hat{\theta}_{twfe} = (\sumi \sumt \ddot x_{it} \ddot x_{it}')^{-1} \sumi \sumt  \ddot x_{it} \ddot y_{it}
+\end{align}
+A detailed discussion of the assumptions and the asymptotic analysis is omitted here but can be found in \textcite{vogelsang2012heteroskedasticity}.

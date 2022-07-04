@@ -1,0 +1,121 @@
+%\subsection{Model Selection}
+\subsection{Simulation: Estimator Selection}
+An applied researcher has to make certain assumptions on the data at hand for the validity of the method used for causal identification. The trade off she faces is to use a general method without putting restrictive assumptions on the data or to use a parsimonious method if she can justify the data satisfies the relevant assumptions. If the causal identification assumption of the method fails, then the estimates will be biased and uninterpretable. On the other hand, the more general the model is, the more imprecise estimates become.
+A common way to show the validity of a method is to run multiple regression specifications and to compare the results given the intuition on the causal links and economic theory. Nevertheless, these are based on a single sample.
+Multiple samples can be simulated by a DGP adapted to the real world data and assuming the causal identification assumptions hold to see the finite sample properties of the methods in question.
+
+The DGP described in the previous subsection is well-adapted to a GFE setting with two groups. The unobserved heterogeneity has two distinct time patterns. Table 1 reports on finite sample properties of pooled OLS, FE, TWFE, IFE estimators. They are compared in terms of bias, variance and coverage probability.
+It is important to note that $\alpha_1^0$ and $\alpha_2^0$ are functions of t. In return, their impact on the outcome and the regressors increase over time.  The impact of $\alpha$ on regressor $X_2$ is nonlinear and small\footnote{Due to the fact that it is scaled by 0.05 in order to avoid an out of proportion contribution to the regressor when T=20.} in the initial periods but grows fast overtime. While the impact of $\alpha$ on regressor $X_1$ is linearly increasing overtime. This impact determines the omitted variable bias in small samples when the they are not accounted for. Pooled OLS estimator suffers from large biases, FE and TWFE perform relatively well with small bias and the coverage probability around 95 percent when T and N are small. However, as either T or N increases the bias increases, the coverage probability gets smaller such that the true value is never in the confidence intervals suggesting the variance decreases while driven by the bias the root mean square error stays relatively high. IFE model is estimated with r=2 factors. IFE estimates have a quite small bias and relatively high RMSE driven by the estimator variance throughout. This suggests that IFE estimates suffer from overfitting in this setup. As a result the coverage probability stays below 95 percent.
+As the magnitude of $\alpha$ increase, GFE estimates perform better. They have low bias and low variance for all T and N and the coverage probability converges to 95 percent level at T=10,  N=100. 
+\paragraph{Consistency and the asymptotic normality of $\hat{\alpha}$.} %or is it asymptotic dist?
+IFE, TWFE
+%\footnote{Apart from the DD.}
+, FE treat the unobserved effects as nuisance parameter. They are not reported nor interpreted. GFE claims that the grouped-fixed effects are consistently estimated when both N,T $\to \infty$. %Note: could they account for DD?
+Figure \ref{fig:alpha11}\footnote{The remaining grouped-fixed effect estimates are omitted in the paper since all shows a similar pattern. All GFE estimates from the simulations in this paper can be found in github.com/baharcos/gfe.} shows that $\alpha_{11}$ estimates are biased\footnote{It should be noted that I do not calculate an intercept in my implementation of the GFE estimator where I get the estimates. Even though $\upsilon_{it}$ are i.i.d. standard normal, they might have some mean when sampled, particularly in small samples. This, combined with the small value of $\alpha_{11}^0 = 1.05$ might have caused this bias. However, I cannot verify it for the time being.} when T=5, N=50 but they recover quickly when either T or N increases. They are normally distributed and tails of the normal distribution gets thinner in either direction. This result enables statistical inference of $\hat{\alpha}$ when the number of groups are correctly specified. % Note: is this the way to say it. showing consistency in finite sample? 
+
+
+% where the [p] is is [h!] means herebut it does not put it there sometimes it does not work because it thinks its very dumb. you can go for  a floatbreak to force it.
+
+%\usepackage{placeins} %use that package
+\begin{table}[p]
+    \centering
+    %\scalebox{0.9}{
+    \caption{Simulation: Bias, RMSE and CP of estimators in the presence of grouped patterns of unobserved heterogeneity.}
+    \input{tables/table_new}
+    %}
+    \label{tab:table0}
+\end{table}
+%\FloatBarrier %floatbarrier will enforce it to be at most here. like nothing that is below the float barrier can be above smtht hat is above the float barrier
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.25]{figures/samplingalpha1.png}
+\caption{Sampling distribution of $\hat{\alpha}_{11}$ where $G = G^0 = 2$ and R=1000 simulation runs.}
+\label{fig:alpha11}
+\end{figure}
+
+
+\subsection{Simulation: Number of Groups}
+%\subsubsection{} I can make subsections heuristics, estimating number of groups, sampling distribution maybe after the consistent comment.
+In the GFE model, \textcite{bonhomme2015grouped} assumes the true number of groups is known by the researcher. However, the number of groups is %often
+estimated even when it is based on economic theory. In applications, this estimation is based on the single sample the researcher observes and she can easily  misspecify the number of groups. This subsection studies the number of group selection and the finite sample properties of GFE estimates of $\theta$ when the number of groups is misspecified at G = 1, 3, 4.
+
+A researcher could employ an information criterion to specify the number of groups from regression runs with different specifications. The information criterion balances a penalty for overspecification and m
+Based on \textcite{bai2002determining} \textcite{bonhomme2015grouped} suggests the following bayesian information criterion (BIC) for estimating $G^0$ consistently:
+\begin{align}
+    BIC(G) = \dfrac{1}{N} \sumi \sumt \left(y_{it} - x_{it}'\hat{\theta}^(G) - \hat{\alpha}_{g_it}^(G) \right)^2 + \hat{\sigma}^2 \dfrac{GT + N + K}{NT}ln(NT),
+\end{align}
+where $\hat{\sigma}^2$ is a consistent estimate of the variance of the error terms. To do so requires N and T to grow at the same rate. Table \ref{tab:tablebic} reports on the selection rate of the number of groups using the simulation results of GFE estimator with different number of groups. The maximum number of groups is set to 4. The BIC provided estimates the true number of groups only when $T=20, N=50$ as expected. In every other case it tends to over-select. This suggests two things: First, the penalty term of the criterion needs to be adapted for small T large N. Such a BIC was developed in \textcite{janys2021mental}, however they report it turns out to be too steep. Second, the over-selection could occur because the efficiency cost of over-specifying is relatively low. 
+
+\begin{table}[h!]
+    \centering
+    \caption{Simulation: Selecting Number of Groups by BIC}
+    \input{tables/table4_bic}
+    \label{tab:tablebic}
+\end{table}
+
+
+An under-specification of the number of groups is unable to account for the group structure; therefore it suffers from the omitted variable bias. Any group specification $G \geq G^0$, however accounts for the group structure, and its estimate of $\theta$ is consistent under assumption $\mathcal{A}$. As the proof of the theorem \ref{eqn:gfeconsist} for $\hat{\theta}$ does not depend on G. See appendix A of \textcite{bonhomme2015grouped}.
+
+Figure \ref{fig:gs} aims to show the consistency of the GFE estimates of $\theta_1$ and Figure \ref{fig:gsn} aims to show the consistency of the GFE estimates of $\theta_2$.
+The last row shows the estimator with G=1 is biased and inconsistent while G=2,3,4, where $G^0=2$ are consistent.
+Linear or nonlinear nature of the correlation between the regressors and the grouped-fixed effect does not seem to affect this result.
+%The last row again shows the estimates of G=1 is biased and inconsistent. While G=2,3,4, where $G^0=2$ is consistent.
+
+%which its corresponding regressor is linearly correlated with the grouped-fixed effects. which its corresponding regressor is nonlinearly correlated with the grouped-fixed effects
+
+\begin{figure}[p]
+\begin{flushleft}
+\includegraphics[scale=0.31]{figures/groupssamplingplot1.png}
+\end{flushleft}
+\caption{Sampling Distribution of $\hat{\theta_1}$ when both T and N increases in different number of group specifications where $G^0 = 2$.}
+\label{fig:gs}
+\end{figure}
+
+Figure \ref{fig:gsn} is aimed to show the consistency of the GFE estimates of $\theta_2$ which its corresponding regressor is nonlinearly correlated with the grouped-fixed effects. The sampling distribution when both T and N increases. The last row again shows the estimates of G=1 is biased and inconsistent. While G=2,3,4, where $G^0=2$ is consistent.
+
+\begin{figure}[h]
+\begin{flushleft}
+\includegraphics[scale=0.31]{figures/groupssamplingplot.png}
+\end{flushleft}
+\caption{Sampling Distribution of $\hat{\theta_2}$ when both T and N increases in different number of group specifications where $G^0 = 2$.}
+\label{fig:gsn}
+\end{figure}
+
+Intuition from OLS suggests that including an irrelevant regressor do not effect the asymptotic properties of the estimator. Nevertheless, some finite sample inefficiency is expected. Before looking at the finite sample properties of the GFE estimator where the number groups are misspecified, we look at how the individuals are divided into groups and how the additional $\hat{\alpha}$ are estimated for some intuition.
+
+Figure \ref{fig:staringalphas} shows the starting value of $\alpha$ for specified number of groups of G=1,2,3,4. For G=2, the true value of $\alpha$ is used as the starting value in Figure \ref{fig:staringalphas}.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.4]{figures/startingvalues.png}
+\caption{$\alpha^{(0)}$ in Algorithm 1}
+\label{fig:staringalphas}
+\end{figure}
+
+Specification $G=1$ basically introduces time dummies into the regression and does not account for the group structure leading to an omitted variable bias. We can think of it as as allowing only for $\xi_t$ and assuming $c_i, \lambda_i' f_t, \alpha_{gt} = 0$ in the context of the theoretical background. 
+To contrasts, specification $G=2$ shows and accounts for the grouped patterns of heterogeneity in the data. Specification $G=3$ and $G=4$ divides the groups into subgroups and fits group heterogeneity with parts of idiosyncratic error term. They introduce additional group-time dummies into the regression. The added fit of over specified groups comes from the idiosyncratic error term that is irrelevant for the causal effect. However, the $\hat{\alpha}_{G>G^0}$ estimates added by number of group overspecification account for both the grouped patterns of heterogeneity and the idiosyncratic error as the individuals divided into more groups. When the number of groups are overspecified inference is not possible for $\hat{\alpha}_{G>G^0}$. Relating to Remark 4 in \textcite{bai2009panel} on p. 1247, some efficiency loss is expected.
+
+Table \ref{tab:table2} reports on bias, RMSE and CP of the GFE estimator with different number of groups specifications. The results show that $G \leq G^0$ is inadequate. On the other hand when $G \ge G^0$, the coverage probabilities stays comparable and close to $G = G^0$. Unlike IFE in \ref{tab:table0} where the overfitting decreased the bias and increased the variance. The bias and RMSE of $G \ge G^0$ is remains similar with minor differences to $G = G^0$ for each N and T suggesting a similarity in their asymptotic distribution. 
+
+\begin{table}[p]
+    \centering
+    \input{tables/table2}
+    \caption{Simulation: GFE Group Specification} %subject to change
+    \label{tab:table2}
+\end{table}
+
+Figure \ref{fig:cilength} shows the average confidence intervals of the GFE estimators with different number of groups specifications for $\theta_1 = 0.10$. The average is taken over 1000 replications when T=10, N=100. The horizontal blue dotted line marks the true, black dots are the mean of the $\theta_1$ estimates for the given estimator with the number of groups specification stated in x-axis. The confidence intervals overlap when $G \geq G^0$. 
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.85]{figures/ciplot.png}
+\caption{Expected Value and Average Confidence Intervals of $\hat{\theta}_1$ T=10, N=100.}
+\label{fig:cilength}
+\end{figure}
+ 
+Finite sample properties important because it shows how the model perform in application and for inference. 
+
+
+%\footnote{Model is estimated using the package in: https://github.com/FixedEffects/InteractiveFixedEffectModels.jl}
+
+%in less precise results. Even though it does not lead to a bias and the overspecified estimator is still consistent, it has higher asymptotic variance, therefore, less efficient and less precise. It is expected that the overspecification leads to some finite sample inefficiencies. Before looking at the finite sample properties, we try to We begin by looking at the starting value of $\alpha$ for different number of groups from which we will draw heuristics.

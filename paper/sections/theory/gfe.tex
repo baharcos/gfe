@@ -1,0 +1,208 @@
+%\subsubsection{Model and Estimator}
+%This section describes the novel method grouped fixed-effects estimator, its asymptotic properties, and a computational method for estimating. The grouped fixed-effects will be referred to as GFE hereafter. The notation I am using here is adapted from \textcite{bonhomme2015grouped}.
+%\textcite{bonhomme2015grouped} denote To illustrate, China joining the World Trade Organization impacted various income groups differently in China causing  \textcite{piketty2019capital} shows that 
+Consider a linear model with grouped patterns of heterogeneity 
+\begin{align}\label{eqn:gfemodel}
+y_{it} = x_{it}'\theta + \alpha_{g_{i}t} + \upsilon_{it}, \hspace{0.3cm} i=1,...,N, t=1,...,T, \end{align}
+with three types of parameters: 
+The parameter vector $\theta$ is shared across all individual and time units. $\alpha_{g_it}$ are the group-specific time effects. The group membership variables $g_i$ map individual units into groups.
+
+In contrast to equation \eqref{{eqn:baseline}}, GFE model restricts the unit-specific heterogeneity. $\xi_t$ is nested in this model. Since $\alpha_{gt}$ accounts for the common shocks with group-specific sensitivities. However, $c_i$ and $\lambda_i' f_t$ are restricted by clustering into groups.
+
+The GFE in the model (\ref{eqn:gfemodel}) is then the solution to the minimization problem below:
+\begin{align} \label{eqn:gfeestimator}
+(\hat\theta, \hat\alpha, \hat\gamma) = \argmin_{(\theta, \alpha, \gamma)\in \Theta \times \mathcal{A}^{gt} \times \Gamma_G} \sumi \sumt (y_{it} - x_{it}'\theta - \alpha_{g_{i}t})^2,
+\end{align}
+for all possible partitions, $\gamma = (g_1,\dots, g_N)$, of N units into G groups, $\theta$ and $\alpha$.
+
+When separated into two steps:
+
+The optimal group assignment\footnote{In the case of a non-unique solution \textcite{bonhomme2015grouped} assigns an individual unit to the minimum g.} minimizes a least squares criterion for given values of $\theta$\footnote{In this section, $\hat{\theta}_{gfe} = \hat{\theta}$ ergo the subscript notation is omitted for the GFE estimator of $\theta$.} and $\alpha$:
+\begin{align}\label{eqn:groupassign}
+\hat g_i(\theta, \alpha) = \argmin_{g \in (1, \dots, G) } \sumt (y_{it} - x_{it}'\theta - \alpha_{g_{i}t})^2
+\end{align}
+
+The GFE estimator of $(\theta, \alpha)$ in (\ref{eqn:gfeestimator}) then becomes:
+\begin{align} \label{eqn:getestimates}
+(\hat\theta, \hat\alpha ) = \argmin_{(\theta, \alpha, \gamma)\in \Theta x \mathcal{A}^{gt}} \sumi \sumt (y_{it} - x_{it}'\theta - \alpha_{\hat g_{i}(\theta,\alpha)t})^2,
+\end{align}
+given the optimal grouping by (\ref{eqn:groupassign}). 
+
+\textcite{bonhomme2015grouped} further extends the model and the respective GFE estimators to include time-invariant unit-specific heterogeneity and group-specific coefficients. The extensions are beyond the scope of this paper. %  and to a nonlinear framework
+
+\subsection{Computation}\label{section:algo}
+The  piecewise-quadratic function in equation \eqref{eqn:gfeestimator} can be minimized for each group to get the GFE estimates with the optimal grouping.%Partitioning the parameter space given the grouping. 
+However, there are $G^N$ ways to group N individual into G groups which makes the exhaustive search almost impossible. Therefore the estimation is a two-step iterative procedure as in IFE. \textcite{bonhomme2015grouped} suggests the following iterative algorithm that alternates between group assignment and estimating parameters $\alpha$ and $\theta$:
+\begin{enumerate}
+    \item Set iteration number $s = 0$ and let ($\theta^{(s)}, \alpha^{(s)}) \in \Theta \times \mathbb{A}^{GT}$ be the starting values.
+    \item \textit{Group Assignment}: Assign all individuals into a group by computing equation \eqref{eqn:groupassign} with $(\theta^{(s)}, \alpha^{(s)})$.
+    \item \textit{Update}: Compute equation \eqref{eqn:getestimates} with the group assignment estimated in Step 2 to get $(\theta^{(s+1)}, \alpha^{(s+1)})$.
+    \item Until numerical convergence, $(\theta^{(s)}, \alpha^{(s)}) = (\theta^{(s+1)}, \alpha^{(s+1)})$, set s = s+1 and go back to step 2.
+\end{enumerate}
+\textcite{bonhomme2015grouped} reports that the objective function is  non-increasing between iterations and the convergence is fast. A detailed discussion the computation method and evaluation of its performance is resorted to subsection \ref{section:sensitivity}.
+
+\subsection{Asymptotic Properties}
+We let both $N \rightarrow \infty$ and $T \rightarrow \infty$ as in large panels but T grows considerably slower than N.
+% Considering the following data generating process:
+% \begin{align}
+%     y_{it} = x_{it}'\theta^0 + \alpha_{g_i^0t} + \upsilon_{it},
+% \end{align}
+% where the $^0$ superscript refers to the true parameters. 
+The number of groups in the data is set to its population parameter, %$G = G^0$,
+and is assumed to be known for the upcoming asymptotic results. 
+
+%We start by benchmarking the infeasible case where the number of groups and the group membership parameter is known and not estimated and then provide conditions where the estimated groups converges to their population counterparts, and the GFE estimator equation (2) is asymptotically equivalent to its population counterpart. \\
+%However, there are  N group membership parameter $g_i$ and $GxT$ group-specific time effects $\alpha_{gt}$
+%Establishing consistency is not straight forward. Because there is N group membership parameter $g_i$ increases as N increases while number of so does the number of group membership parameter $g_i$
+\paragraph{Consistency.}
+\textcite{bonhomme2015grouped} impose the following assumptions to derive the consistency of the GFE estimator.
+\begin{assumption} A1: $\Theta$ and $\mathcal{A}$ are compact subsets of $\mathbb{R}^k$ and $\mathbb{R}$ respectively.
+\end{assumption}
+Compact parameter spaces are required for most consistency proofs. (\cite{freyberger2019practical}) \\
+\textit{For assumptions  $\mathcal{A}$-2 : $\mathcal{A}$-6 there exists a constant M > 0 such that:}
+\begin{assumption} A2: $\lVert . \rVert$ denoting the Euclidean norm, $\EX(\lVert  x_{it} \rVert^2) \le M$.
+\end{assumption}
+\begin{assumption} A3: $\EX(\upsilon_{it}) = 0 $ and $\EX(\upsilon_{it}^4) \le M$.
+\end{assumption}
+\begin{assumption} A4: $| \dfrac{1}{NT} \sumi \sumt \sum_{s=1}^T \EX(\upsilon_{it}\upsilon_{is}x_{it}'x_{is}) | \le M $ 
+\end{assumption}
+\begin{assumption} A5: $\dfrac{1}{N} \sumi \sum_{j=1}^N | \dfrac{1}{T}\sumt \EX(\upsilon_{it}\upsilon_{jt}| \le M $ 
+\end{assumption}
+\begin{assumption} A6: $| \dfrac{1}{N^2T} \sumi \sum_{j=1}^N \sumt \sum_{s=1}^T Cov(\upsilon_{it}\upsilon_{jt}, \upsilon_{is}\upsilon_{js}) | \le M $ 
+\end{assumption}
+
+Assumption $\mathcal{A}$-2 requires the $x_{it}$ vector to have a finite uncentered second moment for each individual and time unit, which bounds the variance of the covariates and restricts explosive trends. %It is a necessary condition for covariance stationarity. 
+With $\mathcal{A}$-3, error terms are centered around 0 with bounded tails. They are weak assumptions and standard as made separately in $\mathcal{P}$-4 with a slightly stricter forth moment for regressors and $\mathcal{P}$-2 where uncorrelatedness is further added.
+% They are weak assumptions and are the same as assuming the existence of the respective moments($<\infty$) which is standard in linear regression model as well as in fixed effects models. (\cite{hansen2022econometrics}, Chapter 4.4 and 17.20)
+%  Another standard assumption of fixed effects estimator is the strict exogeneity of the error terms and the covariates across time. (\cite{hansen2022econometrics}, Chapter 17.7) 
+In contrast to the common modeling assumption of the panel data $\mathcal{P}$-2. (\cite{hansen2022econometrics}, Chapter 1.5.), we allow for both cross-sectional and time-series dependence. Although weak dependence conditions are required as in IFE in \textcite{bai2009panel}: $\mathcal{A}$-4 restricts the time-series dependence between error term and covariates while  $\mathcal{A}$-5 restricts the cross-sectional dependence , and $\mathcal{A}$-6 restricts the time-series dependence of the error terms. 
+%One thing to notice is that either N times or the T times the mean is bounded which makes it possible to converge in probability to 0 once the mean terms appear while showing consistency: This sentence do not make any sense to me.
+
+\begin{assumption} A7: Let $\overline{x}_{g\wedge\tilde{g},t}$ denote the mean of $x_{it}$ in the intersection of the true group $g_i^0 = g$ and any $g_i = \tilde{g}$. $\forall$ groupings $\gamma = {g_1, \dots, g_N} \in \Gamma_G$, we define $\hat\rho(\gamma)$ as the minimum eigenvalue of the following matrix: 
+\begin{align*}
+\dfrac{1}{NT} \sumi \sumt (x_{it} - \overline{x}_{g\wedge\tilde{g},t})(x_{it} - \overline{x}_{g\wedge\tilde{g},t})'.
+\end{align*}
+Then $\plim_{N,T \rightarrow \infty}  \min_{\gamma \in \Gamma_G} \hat\rho(\gamma) = \rho > 0.$
+\end{assumption}
+
+$\mathcal{A}$-7 states the relevance condition of the group structure such that where the partitioning of the data intersects with the true grouping, $x_{it}$ should show sufficient within-group variation. It assures the non-singularity of the matrix and the identification of the parameters which relates to the full rank conditions $\mathcal{P}$-3 and $\mathcal{F}$-3.
+
+\begin{theorem}\label{eqn:gfeconsist} -- Consistency: Let assumption $\mathcal{A}$ hold, then as N and T $\rightarrow \infty$:
+\begin{align*}
+    \hat\theta  \overset{p}{\to} \theta,\\
+\dfrac{1}{NT} \sumi \sumt (\hat\alpha_{\hat g_{i}t} - \alpha_{g_{i}t})^2
+    \overset{p}{\to} 0.
+\end{align*}
+\end{theorem}
+For the proof see Appendix A of \textcite{bonhomme2015grouped}. This theorem states that $\hat\theta$ is uniformly consistent in the compact parameter space. In contrast, the consistency argument for $\hat{\alpha}$ suggests the spaces spanned by $\hat{\alpha}$ and $\alpha$ are asymptotically equivalent. Uniform consistency cannot be claimed for $\hat{\alpha}$ since number of $\alpha_{gt}$ goes to infinity as T goes to infinity. See \textcite{newey1994large} and \textcite{bai2009panel}.
+
+\paragraph{Asymptotic Distribution.} We start by benchmarking the infeasible case where the group membership parameter is known in addition to the number of groups to derive the asymptotic distribution of the GFE estimator. 
+\begin{align}\label{eqn:gfe_infeasible}
+    (\tilde{\theta}, \tilde{\alpha}) =  \argmin_{(\theta, \alpha)\in \Theta x \mathcal{A}^{gt}} \sumi \sumt (y_{it} - x_{it}'\theta - \alpha_{g_{i}t})^2.
+\end{align}
+The problem is reduced here to the pooled least squares estimator discussed in section \ref{section:pols} of $y_{it}$ on $x_{it}$ with the interaction of group and time dummies. Assumption  $\mathcal{B}$ provides conditions under which estimated groups converge to their population counterparts, and the GFE estimator in equation \eqref{eqn:gfeestimator} is asymptotically equivalent to the infeasible least squares estimator in equation \eqref{eqn:gfe_infeasible}.\\
+We first require each group to have a large number of individual units:
+\begin{assumption} B1: $\forall g \in {1,...,G}: plim_{N \rightarrow \infty} \dfrac{1}{N} \sumi \textbf{1} \{g_i = g\} =\pi_g > 0$,
+\end{assumption}
+and the groups are well-separated:
+\begin{assumption} B2: $\forall (g,\tilde{g}) \in \{1,...,G\}^2$ such that $g \neq \tilde{g}$: $plim_{T \rightarrow \infty} \dfrac{1}{T} \sumt (\alpha_{gt} - \alpha_{\tilde{g}t})^2 = c_{g, \tilde{g}} > 0. $
+\end{assumption}
+The two equalities to constants are useful to show the Hausdorff distance between the set of $\hat\alpha$, the GFE estimates, and the set of true values converges in probability to 0 as both N and T tend to infinity. 
+The following assumption characterizes the degree of dependence of the error terms and the contemporaneous difference between the grouped-fixed effects, over time and to each other. They have a strongly mixing faster-than-polynomial decay rate. Furthermore, the contemporaneous difference between the grouped-fixed effects and error terms are contemporaneously uncorrelated.
+\begin{assumption} B3: $\exists a>0$ and  $\exists d_1 > 0$ and a sequence $\alpha[t] \leq e^{-at^{d_1}}$ such that, $\forall i \in {i,...,N}$ and 
+$\forall (g,\tilde{g}) \in \{1,...,G\}^2$ such that $g \neq \tilde{g}$, $\{\upsilon_{it}\}_t, \{\alpha_{gt} - \alpha_{\tilde{g}t}\}_t$, and $\{(\alpha_{gt} - \alpha_{\tilde{g}t})\upsilon_{it}\}_t$ are strongly mixing processes with mixing coefficients $\alpha[t]$\footnote{Here I chose to use the conventional notation for strong mixing processes, $\alpha[t]$, in line with \textcite{bonhomme2015grouped}. It is not related to $\alpha$, the grouped-fixed effects vector.}. Moreover, $\EX((\alpha_{gt} - \alpha_{\tilde{g}t})\upsilon{it}) = 0.$
+\end{assumption} 
+
+For many asymptotic results, a strong mixing processes is needed. It is one of the weakest measure of dependence.(\cite{hansen2022econometrics}, Chapter 14.12). Nevertheless, $\mathcal{B}$-3 strengthens Assumption A on time series dependence.
+
+\begin{assumption} B4: $\exists b>0$ and  $\exists d_2 > 0$ such that $Pr(|\upsilon_{it}| > m) \leq e^{1-(m/b)^{d_2}}$ $\forall i,t, m > 0$.
+\end{assumption}
+$\mathcal{B}$-4 bounds the tail properties of the error term further and with assumption $\mathcal{B}$-3 bound the  group misclasification probabilities.
+\begin{assumption} B5: $\exists M^*>0$ such that, as N and T $\rightarrow \infty$:
+
+\begin{align*}
+    \sup_{i \in \{1,...,N\}} Pr(\dfrac{1}{T} \sumt \lVert x_{it} \rVert \geq M^*) = o(T^{-\delta}) \hspace{0.4cm} \forall \delta > 0,
+\end{align*}
+\end{assumption}
+bounds the distribution of the covariates.
+
+\begin{theorem} -- Asymptotic Equivalence: Let assumptions $\mathcal{A}$ and $\mathcal{B}$ hold. Then $\forall \delta > 0$ and as N and T $\rightarrow \infty$:
+\begin{align}
+Pr( \sup_{i \in \{1,...,N\}} |\hat g_i - g_i| > 0) = o(1) + o(NT^{-\delta}), 
+\end{align}
+\begin{align}
+\hat{\theta} = \tilde{\theta} + o_p(T^{-\delta}),
+\end{align}
+\begin{align}
+\hat\alpha_{gt} = \tilde{\alpha}_{gt} + o_p(T^{-\delta}) \forall g,t.
+\end{align}
+\end{theorem}
+For the proof see \textcite{bonhomme2015grouped} Appendix B.
+
+Assumption $\mathcal{C}$ characterize the asymptotic distribution of the infeasible least squares estimator $(\tilde{\theta}, \tilde{\alpha})$.
+
+\begin{assumption} C1: $\forall$ i, j and t: $\EX(x_{it}\upsilon_{it}) = 0$.
+\end{assumption}
+Strictly exogenous covariates and independent observations across individual units, random sampling, satisfy the assumption.
+The group mean of $x_{it}$ when $g_i = g $,the true group, is denoted by $\Bar{x}_{gt}$.
+\begin{assumption} C2: There exists positive definite matrices $\Sigma_\theta$ and $\Omega_\theta$ such that:
+\begin{align*}
+    \Sigma_\theta = \plim_{N,T \rightarrow \infty} = \dfrac{1}{NT} \sumi \sumt (x_{it} - \overline{x}_{g_it})(x_{it} - \overline{x}_{g_it})',\\
+\Omega_\theta = \lim_{N,T \rightarrow \infty} \dfrac{1}{NT} \sumi \sumj \sumt \sums \EX[\upsilon_{it} \upsilon_{js}(x_{it} - \overline{x}_{g_i^0t})(x_{it} - \overline{x}_{g_it})'].
+\end{align*}
+\end{assumption}
+
+\begin{assumption} C3: As N, T $\rightarrow \infty$: $\dfrac{1}{\sqrt{NT}} \sumi \sumt (x_{it} - \overline{x}_{g_i^0t})\upsilon_{it} \overset{d}{\to} \mathcal{N}(0,\Omega_\theta).$
+\end{assumption}
+
+\begin{assumption} C4: $\forall$ (g, t): $\sumi \sumj \EX(\textbf{1}\{g_i = g\}\textbf{1}\{g_j = g\}\upsilon_{it} \upsilon_{jt}) = \omega_{gt} > 0.$
+\end{assumption}
+
+\begin{assumption} C5: $\forall$ (g, t) and as N, T $\rightarrow \infty$: $\dfrac{1}{\sqrt{N}} \sumi \textbf{1}\{g_i = g\}\upsilon_{it}   \overset{d}{\to} \mathcal{N}(0,\omega_{gt}).$
+\end{assumption}
+
+Assumption $\mathcal{C}$-2 and $\mathcal{C}$-3 imply that  $\tilde{\theta}$ has a standard asymptotic distribution similar to the fixed effects estimator discussed in subsection 2.2, however, clustered by groups rather than individuals. Assumption $\mathcal{C}$-5 and $\mathcal{C}$-5 imply infeasible GFE estimates,$\tilde{\alpha}$, has a standard asymptotic distribution.
+
+\begin{corollary}-- Asymptotic Distribution: Let Assumptions   $\mathcal{A}$ , $\mathcal{B}$ and $\mathcal{C}$ hold and let N, T $\rightarrow \infty$ such that for some $\nu > 0$, $N/T^\nu \rightarrow 0$. Then we have
+\begin{align}
+    \sqrt{NT}(\hat\theta - \theta) \overset{d}{\to}  \mathcal{N}(0,\Sigma_\theta^{-1}\Omega_\theta\Sigma_\theta^{-1}),
+\end{align}
+and, for all (g,t),
+\begin{align}
+\sqrt{N}(\hat\alpha_{gt} - \alpha_{gt}) \overset{d}{\to}  \mathcal{N}(0, \dfrac{\omega_{gt}}{\pi_g^2})
+\end{align}
+\end{corollary}
+
+\subsection{Inference}
+Asymptotic analysis discussed in 2.2 where both N and T go to infinity provide conditions under which group membership does not effect inference. The discussion here covers only the inference for this case i.e. large panel inference. The short panel inference can be found in the Supplemental Material of \textcite{bonhomme2015grouped}.\\
+GFE residuals are  $\hat{\upsilon}_{it} = y_{it} - x_{it}\hat{\theta} - \hat{\alpha}_{\hat{g}_it}$ and under assumption $\mathcal{C}$, the variance of $\hat{\alpha}_{gt}$ can be estimated by:
+\begin{align}
+\hat{Var}(\hat\alpha_{gt}) = \dfrac{\sumi \indicator\{\hat{g_i} = g\}\hat{\upsilon}_{it}^2}{(\sumi \indicator\{\hat{g_i} = g\})^2},
+\end{align}
+
+%\textbf{Correctness Check Needed}
+In the case of i.i.d. error terms across individual units and time periods, a consistent estimator of the asymptotic variance of $\theta$ is:
+\begin{align}
+\hat{Var}(\hat\theta) = \dfrac{\hat{\Sigma}_\theta^{-1} \hat{\Omega}_\theta \hat{\Sigma}_\theta^{-1}}{NT},
+\end{align}
+where
+\begin{align*}
+    \hat{\Sigma}_\theta = \dfrac{1}{NT} \sumi \sumt (x_{it} - \overline{x}_{g_it})(x_{it} - \overline{x}_{g_i^0t})',
+\end{align*}
+
+and 
+\begin{align*}
+    \hat{\Omega}_\theta = \dfrac{1}{NT} \sumi \sumt \hat{\upsilon}_{it}^2 (x_{it} - \overline{x}_{\hat{g}_it})(x_{it} - \overline{x}_{\hat{g}_it})'.
+\end{align*}
+
+% which simplifies to
+% \begin{align*}
+%  \dfrac{1}{NT} \hat{\Sigma}_\theta^{-1} \sumi \sumt \hat{\upsilon}_{it}^2 %\dfrac{1}{(NT)^2} 
+% \end{align*}.
+% I will write the above equation nicer and do a correctness check.
+
+
+% do I say something? dk. spatial modelswith gfe.
+
+
+

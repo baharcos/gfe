@@ -1,0 +1,215 @@
+\documentclass[paper=a4,oneside,DIV=8,fontsize=12pt, sectionentrydots=true]{scrartcl}
+
+\usepackage[left=3cm,right=2cm,bottom=2cm,top=2cm,footskip=1.4cm,headsep=0.6cm]{geometry}
+%\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsthm,amssymb}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tikz}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usetikzlibrary{arrows.meta,
+                chains,
+                positioning,
+                shapes.geometric
+                }
+%\usepackage{fancyhdr}
+\usepackage{stmaryrd}
+\usepackage{enumerate}
+\usepackage{setspace}
+\usepackage{multirow,array}
+\usepackage{caption}
+\usepackage{bbm}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{longtable}
+\usepackage{blindtext}
+\usepackage{tocloft}
+\usepackage{booktabs}
+\allowdisplaybreaks
+
+\captionsetup[figure]{font=small,labelfont=small}
+%\KOMAoption{footnotes}{multiple}
+\setstretch{1.5}
+
+\setlength{\parindent}{0pt}
+
+% Bibliography
+\usepackage[
+    backend=biber,
+%    style=numeric-comp,
+    style=authoryear,
+    sorting=nyt,
+    maxbibnames = 99
+  ]{biblatex}
+\addbibresource{bibliography_thesis.bib} %Imports bibliography file
+
+
+\newtheoremstyle{dotless}{}{}{\itshape}{}{\bfseries}{}{ }{}
+
+\theoremstyle{dotless}
+\newtheorem{question}{Question}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem*{remark}{Remark}
+\newtheorem{definition}{Definition}
+\newtheorem*{claim}{Claim}
+\DeclareMathOperator*{\E}{\text{E}}
+\DeclareMathOperator{\EX}{\mathbb{E}}% expected value
+\DeclareMathOperator*{\cov}{\text{Cov}}
+\DeclareMathOperator*{\var}{\text{Var}}
+\DeclareMathOperator*{\Xbold}{\boldsymbol{X}}
+\DeclareMathOperator*{\Xbolddot}{\boldsymbol{\Dot{X}}}
+\DeclareMathOperator*{\sumi}{\sum_{i=1}^N}
+\DeclareMathOperator*{\sumj}{\sum_{j=1}^N}
+\DeclareMathOperator*{\sums}{\sum_{s=1}^T}
+\DeclareMathOperator*{\sumt}{\sum_{t=1}^T}
+\DeclareMathOperator*{\sumtstar}{\sum_{t^* = 1}^T}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\A}{\mathbbm{A}}
+\DeclareMathOperator*{\indep}{\perp \!\!\! \perp}
+\DeclareMathOperator*{\Prob}{\mathbbm{P}}
+\DeclareMathOperator*{\plim}{plim}
+\DeclareMathOperator*{\indicator}{\textbf{1}}
+
+
+% Align Roman page numbers
+\cftsetpnumwidth{2em}
+
+% Add dots after heading in TOC
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+\newtheorem*{assumption*}{\assumptionnumber}
+\providecommand{\assumptionnumber}{}
+\makeatletter
+\newenvironment{assumption}[2]
+ {%
+  \renewcommand{\assumptionnumber}{Assumption $\mathcal{#1}$-#2}%
+  \begin{assumption*}%
+  \protected@edef\@currentlabel{$\mathcal{#1}$-#2}%
+ }
+ {%
+  \end{assumption*}
+ }
+\makeatother
+
+\usepackage{fancyhdr}% http://ctan.org/pkg/fancyhdr
+\fancypagestyle{mypagestyle}{%
+ \fancyhf{}% Clear header/footer
+ \fancyhead[L]{\textit{Bahar Coskun}}
+ \fancyhead[R]{\textit{Master Thesis}}
+ \fancyfoot[C]{\thepage}%
+ \renewcommand{\headrulewidth}{.4pt}% Header rule of .4pt
+}
+\pagestyle{mypagestyle}
+
+
+\begin{document}
+ % Keine Seitenzahlen im Vorspann
+ \pagestyle{empty}
+
+ % Titelblatt der Arbeit
+ \begin{titlepage}
+
+ %\includegraphics[scale=0.45]{kit-logo.jpg}
+ \vspace*{1cm} 
+
+ \begin{center} 
+ {\Large{\textbf{Group Misspecification in Grouped Fixed Effects}} \vspace{3cm}
+ 
+ {\normalsize Master Thesis Presented to the \\
+ Department of Economics at the\\
+ Rheinische Friedrich-Wilhelms-Universität Bonn}\\\vspace{0.5cm}
+
+ {\normalsize In Partial Fulfillment of the Requirements for the Degree of \\
+Master of Science (M.Sc.)}\\\vspace{4.5cm}
+ 
+
+
+ {\normalsize Supervisor: Prof. Dr. Joachim Freyberger} \\\vspace{2cm}
+
+
+{\normalsize Submitted in June, 2022 by: \\
+Bahar Coskun \\
+Matriculation Number: 3296452}
+} \end{center}
+\end{titlepage}
+
+
+ % Inhaltsverzeichnis
+\tableofcontents
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+
+\clearpage
+\listoffigures
+\listoftables
+\addtocontents{lot}{\protect\thispagestyle{empty}}
+\newpage
+\input{sections/table_abbr.tex}
+
+\newpage
+\pagenumbering{arabic} % restart numbering
+\setcounter{table}{0}
+\pagestyle{mypagestyle}
+
+\section{Introduction}\label{intro}
+\input{sections/intro.tex}
+
+\section{Theoretical Background}
+\input{sections/theory/theoratical-background}
+
+\subsection{Basic Linear Panel Models}\label{section:pols} %Pooled OLS Estimator
+\input{sections/theory/pols}
+
+\subsection{Panel Models with Fixed Effects}\label{Fixed Effects Model} %Fixed Effects Estimator/ Basic Linear Unobserved effects models.
+\input{sections/theory/fe}
+\subsection{Panel Models with Two-way Fixed Effects} 
+\input{sections/theory/twfe}
+\subsection{Panel Models with Interactive Fixed Effects} 
+\input{sections/theory/ife}
+\section{Panel Models with Grouped Fixed-Effects}\label{Grouped Fixed-Effects Model} % Panel Models with Grouped-Fixed Effects Grouped Fixed-Effects Estimator
+\input{sections/theory/gfe}
+
+
+
+\section{Simulations}\label{simulations}
+\input{sections/simulation/simulation}
+
+
+\section{Conclusion}\label{conclusion}
+\input{sections/conclusion.tex}
+
+
+\newpage
+
+\printbibliography[heading=bibintoc,title={References}] 
+
+\newpage
+
+\setcounter{figure}{0} 
+\renewcommand{\thefigure}{A.\arabic{figure}}
+\setcounter{table}{0} 
+\renewcommand{\thetable}{A.\arabic{table}}
+\setcounter{equation}{0} \renewcommand{\theequation}{A.\arabic{equation}}
+\setcounter{footnote}{0}
+
+\pagenumbering{Roman}
+\renewcommand{\thesection}{A}
+\section{Appendix}
+\input{sections/appendix}
+
+
+
+\clearpage
+\renewcommand{\thesection}{B}
+%\renewcommand{\thesection}{A}
+\section{Statement of Authorship}
+\input{sections/authorship.tex}
+
+
+\end{document}

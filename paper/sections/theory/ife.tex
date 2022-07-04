@@ -1,0 +1,41 @@
+IFE model is a generalization of the FE, TWFE and the GFE model by allowing for individual-specific effects of time-dependent shocks. 
+Consider the model:
+\begin{align}
+    y_{it} = x_{it}'\theta + \lambda_i' f_t + \upsilon_{it} \hspace{0.7cm} i=1,...,N, \hspace{0.3cm} t=1,...,T,
+\end{align}
+where $x_{it}$ is a $k \times 1$  vector of k observable regressors, $\theta$ is a $k \times 1$ vector of unknown coefficients, $\lambda_i$ is a $r \times 1$ vector of factor loadings, $f_t$ is a $r \times 1$ vector of common shocks and  $\upsilon_{it}$ is the idiosyncratic error. The interaction term $\lambda_i' f_t $ allows for each individual to have a different sensitivity to the common shocks and is unobserved. Even though only $\lambda_i' f_t$ appears in the model, this term can account for $\xi_t, c_i, \alpha_{gt}$. However, in the presence of $\xi_t, c_i, \alpha_{gt}$, not imposing their assumptions leads to an efficiency lost.
+
+TWFE, as discussed in the previous subsection, does not allow for an interaction between the common time trends and unit-specific fixed effects. This restriction holds when the period shock affects all individuals equally and they share a linear time trend. In a DD context, this restriction is referred to as the parallel trends assumption. It fails if the common shocks affect individuals differently. 
+%For example, \textcite{topalova2010factor} showed the shock of India's trade liberalization in 1991 had distinct effects by districts which needs to be account for in DD setting when studying the effects of trade liberalization. 
+This restriction is necessary in a way to be able to estimate the model by pooled OLS method. An interaction dummy of individual unit and time dummies cannot be simply included in and directly estimated by the pooled OLS regression. As it would be interchangeable with the error term and cannot be statistically identified. However, they can be included by fitting the error terms into a factor model. This model is the most general one that we discuss here such that all the other ones can be written in the form of IFE. 
+
+ 
+$\theta$, $\lambda_i$ and $f_t $ are estimated from the model by a least squares criterion for a given choice of r factors:
+
+\begin{align}
+(\hat{\theta}_{ife},\hat{f}, \hat{\lambda}) = \argmin_{(\theta, f, \lambda)} \sumi \sumt (y_{it} - x_{it}'\theta - \lambda_i' f_t)^2.
+\end{align}
+
+The estimation is a two-step iterative procedure alternating between: given F and $\Lambda$ calculating $\theta$, and for given $\theta$ calculating F and $\Lambda$. There are different methods for obtaining common factors F exist. A popular one is principal components.
+%Unlike the other models discussed in this paper, the observations are not pooled in this setting. This is necessary for estimating the factor structure of the error terms. $\upsilon$, as well as $e = \Lambda F' + \upsilon$ are $N \times T$ matrices. 
+%As opposed to model (1) we do not restrict the relation between 
+
+% Moreover, it adds as many parameters as observations into the model the incidental parameter bias which as many parameters as observations into the model
+% So a factor structure is needed.
+
+% An interaction term is necessary whenever the shocks affect different cross-section units differently. That is the time trends of the cross-section units are not parallel to each other.
+% To illustrate applications where interactive fixed effects are necessary:in  macroeconomics shocks affect different  differently
+
+% However, factors can account for interaction \textcite{bai2009panel} 
+% In a way to estimate it by pooled OLS by including that is not possible to do Another way to account for unobserved heterogeneity 
+
+% Additive case can be thought as a special case of interactive fixed effects, GFE as well I reckon.
+
+% for TWFE and in \textcite{bai2009panel} for IFE.
+% I provide some insights from TWFE and IFE. 
+% TWFE is very common approach in policy analysis. It has been well studied the asymptotics are omitted in this paper
+
+% There are different estimation methods. Principal components is one of them.
+
+
+%In matrix form the objective function is $\lVert Y - \theta X - \Lambda F' \rVert_F$, where $Y$ is a $N \times T$ matrix, $X$ is a $N \times T \times k$ matrix, $\Lambda$ is a $N \times R$ matrix, and $F$ is a $T \times R$ matrix. 

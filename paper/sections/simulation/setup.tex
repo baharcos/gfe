@@ -1,0 +1,35 @@
+\subsection{Setup}\label{section:DGP}
+The data generating process (DGP) is same across all simulations although the fitted model changes.
+The dependent variable is generated as follows:
+\begin{align}
+ y_{it} = x_{it}'\theta^0 + \alpha_{g_i^0t}^0 + \upsilon_{it}, \hspace{0.3cm} i=1,...,N,  \hspace{0.2cm} t=1,...,T, \hspace{0.2cm} g=1,2=G^0.
+\end{align}
+The error terms are i.i.d. standard normal: $\upsilon_{it} \sim \mathcal{N}(0, 1)$
+
+The regressors are generated as follows:
+%Covariate $X_1$ is linearly correlated with grouped fixed-effects:
+\begin{align}
+x_{i(g)t1} = 0.2 alpha_{gt} + u_{it},
+\end{align}
+%while covariate $X_2$ is non-linearly  correlated:
+\begin{align}
+    x_{i(g)t2} = 0.05alpha_{gt}^3 + u_{it},
+\end{align}
+where $u_{it}  \sim Unif(-3,3)$.
+
+The parameters are defines as:
+\begin{align}
+    \theta^0 = \left[\begin{array}{c}
+         0.1 \\
+         0.5
+    \end{array}\right]
+\end{align}
+\begin{align}
+     \alpha_1^0 = e^{\frac{t}{20}}
+\end{align}
+\begin{align}
+    \alpha_2^0 = -\dfrac{t}{5}
+\end{align}
+The population is equally divided into two groups.
+
+%Furthermore, we restrict our attention to a static panel where all the regressors in the model have the same time subscript. 

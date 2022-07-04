@@ -1,0 +1,27 @@
+\subsection{Proof of Theorem 2.1: Consistency of Pooled OLS}
+
+Under assumption $\mathcal{P}$, $\hat\theta_{pool}$ is identified as:
+\begin{align*}
+    \hat\theta_{pool} = (\sumt \sumi  x_{it}x_{it}')^{-1}\sumi\sumt x_{it}y_{it}
+\end{align*}
+When we plug in the model $y_{it} =  x_{it}'\theta + e_{it}$:
+
+\begin{align*}
+    \hat\theta_{pool} = (\sumt \sumi x_{it}x_{it}')^{-1}\sumt\sumi x_{it}x_{it}'\theta + (\sumt \sumi x_{it}x_{it}')^{-1} \sumt \sumi  x_{it}e_{it} \\
+    = \theta + (\sumt \sumi x_{it}x_{it}')^{-1} \sumt \sumi x_{it}e_{it}\\
+    = \theta + (\sumt \dfrac{1}{N} \sumi  x_{it}x_{it}')^{-1} \sumt \dfrac{1}{N} \sumi x_{it}e_{it}
+\end{align*}
+By assumption $\mathcal{P}$-1 and WLLN for i.i.d. random variables as N $\rightarrow \infty$:
+\begin{align*}
+\sumt \dfrac{1}{N} \sumi x_{it}x_{it}'  \overset{p}{\to} \EX(x_{it}x_{it}') \\
+\sumt \dfrac{1}{N} \sumi x_{it}e_{it}  \overset{p}{\to} \EX(x_{it}e_{it}) 
+\end{align*}
+
+By assumption $\mathcal{P}$-2 $\EX(x_{it}e_{it}) = 0$.
+Thus:
+\begin{align*}
+ \hat\theta_{pool} \overset{p}{\to} \theta + \EX(x_{it}x_{it}')^{-1}  \EX(x_{it}e_{it})\\
+ \overset{p}{\to} \theta + \EX(x_{it}x_{it}')^{-1}0\\
+ \overset{p}{\to} \theta 
+\end{align*}
+This shows that $\hat\theta_{pool}$ is a consistent estimator of $\theta$ when assumption $\mathcal{P}$ holds. 

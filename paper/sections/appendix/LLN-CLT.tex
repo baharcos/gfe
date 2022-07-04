@@ -1,0 +1,21 @@
+\subsection{Weak Law of Large Numbers}
+%How to cite? My source here are chapter 4 of Michael's Econometric Basic Module WS 19/20 notes and Joachim's 5th handout of Econometrics I WS 19/20 which is from Casella and Berger (2001), Section 5.5..
+
+Suppose $\{X_1, \dots, X_n\}$ is a sequence of i.i.d. $\mathbb{R}^k$ valued random variables  i.e. a random sample from a distribution.
+Let $\Bar{X}_n$ denote the sample mean $\dfrac{1}{N}\sumi X_i$ and $\EX(X_n)$ exists then $\Bar{X}_n \overset{p}{\to} \EX(X_n)$. 
+
+In the case where $X_i$ and $X_j$ for $i \neq j$ is not independent
+but uncorrelated random variables, we would additionally need to assume existence of the variance to get this result.
+
+
+\subsection{Central Limit Theorem}
+
+Suppose $\{X_1, \dots, X_n\}$ is a sequence of i.i.d. $\mathbb{R}^k$ valued random variables and suppose $\EX(X_n) = \mu$ and $Cov(X_n)= \Sigma$ exists, then $\sqrt{n}(\Bar{X}_n - \mu) \sim \mathcal{N}(0,\Sigma)$.
+
+\subsection{Continuous Mapping Theorem}
+
+Suppose $\{X_1, \dots, X_n\}$ is a sequence of i.i.d. $\mathbb{R}^k$ valued random variables and g: $\mathbb{R}^k \rightarrow \mathbb{R} $ is a continuous function:
+\begin{itemize}
+    \item If $X_n \overset{p}{\to} X$ then  $g(X_n) \overset{p}{\to} g(X)$.
+    \item If $X_n \overset{d}{\to} X$ then  $g(X_n) \overset{d}{\to} g(X)$.
+\end{itemize}

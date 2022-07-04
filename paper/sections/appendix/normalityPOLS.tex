@@ -1,0 +1,9 @@
+\subsection{Proof of Theorem 2.2: Asymptotic Normality of Pooled OLS}
+By CLT:
+\begin{align*}
+    \dfrac{1}{\sqrt{N}} \sumi X_i e_i \overset{d}{\to} \mathcal{N}(0,\EX(X_i'e_ie_i'X_i)),
+\end{align*}
+and therefore from the property of multivariate normal distribution, that is $AZ + b \sim \mathcal{N}(b,AA')$ if $Z \sim \mathcal{N}(0,\textbf{I}_k)$, $A \in \mathbb{R}^{m\times k}$, $b \in \mathbb{R}^m$, the asymptotic normality of $\hat\theta_{pool}$ follows: 
+\begin{align*}
+    \sqrt{N}(\hat\theta_{pool} - \theta) \overset{d}{\to} \mathcal{N}(0,\EX(X_i'X_i)^{-1}\EX(X_i'e_ie_i'X_i)\EX(X_i'X_i)^{-1})
+\end{align*}
